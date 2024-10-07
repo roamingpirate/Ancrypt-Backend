@@ -7,7 +7,8 @@ AudioRouter.use(express.json());
 
 AudioRouter.get('/create', async (req,res) => {
     const as = await retriveAnimationScriptData("1");
-    await createAudio("1",as);
+    const audioData = await createAudio("1",as);
+    res.json(audioData);
 })
 
 export default AudioRouter;

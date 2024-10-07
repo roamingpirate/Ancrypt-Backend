@@ -44,7 +44,7 @@ import { promises as fs , createWriteStream} from "fs";
     return data.toString("base64");
   };
 
-const elevenLabsApiKey = "sk_43c3fd75226a799512600015838c07a48fb0146ffc9b2da1";
+const elevenLabsApiKey = "sk_9c8eabbb80bf29b28bdb810cc34451e8a9754fbbe2ee3dea";
 const MalevoiceID = "cjVigY5qzO86Huf0OWal";
 const FemaleVoiceId = "cgSgspJ2msm6clMCkdW9";
 const elevenlabs = new ElevenLabsClient({
@@ -70,7 +70,7 @@ const lipSyncMessage = async (pid,i, j,k) => {
     console.log("Creating audio");
     let audioData = [];
 
-    for(let k=0;k< animationScript.length;k++){
+    for(let k=0;k<animationScript.length;k++){
         const speechArr = animationScript[k].Script;
         let SceneaudioData = [];
             for (let i = 0; i < speechArr.length; i++) {
@@ -108,8 +108,8 @@ const lipSyncMessage = async (pid,i, j,k) => {
             audioData.push(SceneaudioData);
     }
   
-  
+   console.log("pello");
     return audioData;
   
-    console.log("pello");
+   
   };

@@ -17,11 +17,6 @@ app.get('/', (req,res) => {
     console.log("pell");
 })
 
-import { ElevenLabsClient, play } from "elevenlabs";
-
-const elevenlabs = new ElevenLabsClient({
-  apiKey: "sk_43c3fd75226a799512600015838c07a48fb0146ffc9b2da1" // Defaults to process.env.ELEVENLABS_API_KEY
-})
 
 
 

@@ -7,7 +7,12 @@ const ScriptRouter = express.Router();
 ScriptRouter.use(express.json());
 
 ScriptRouter.get('/', async (req,res) => {
-    const scriptData = await retriveScriptData("1");
+    let scriptData = await retriveScriptData("1");
+    console.log(typeof(scriptData));
+    if(typeof(scriptData) == 'string')
+    {
+        scriptData = JSON.parse(scriptData);
+    }
     res.json(scriptData);
 })
 
@@ -15,10 +20,11 @@ ScriptRouter.post('/', async (req,res) => {
     const prompt = req.body;
     console.log('Generating Script');
     try{
-        const scriptData = await generateScript(prompt);
+        let scriptData = await generateScript(prompt);
+        scriptData = JSON.parse(scriptData);
         res.json(scriptData);   
         uploadScriptData("1",scriptData);
-        const animationScript = await createAnimationScript(JSON.parse(scriptData));
+        const animationScript = await createAnimationScript(scriptData);
         uploadAnimationScriptData("1",animationScript);
     }
     catch(err)
@@ -29,14 +35,16 @@ ScriptRouter.post('/', async (req,res) => {
 
 ScriptRouter.post('/update', async(req,res) => {
     const updatedScript = req.body;
+    console.log("tello");
     try{
         uploadScriptData("1",updatedScript);
-        const animationScript = await createAnimationScript(JSON.parse(updatedScript));
-        uploadAnimationScriptData("1",updatedScript);
-        res.json(updatedScript);   
+        res.send("success"); 
+        const animationScript = await createAnimationScript(updatedScript);
+        uploadAnimationScriptData("1",animationScript);  
     }
-    catch{
+    catch(err){
         console.log(err);
+        res.status(200).send("error");
     }
 })
 
