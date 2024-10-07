@@ -44,7 +44,7 @@ ScriptRouter.post('/update', async(req,res) => {
     }
     catch(err){
         console.log(err);
-        res.status(200).send("error");
+        res.status(400).send("error");
     }
 })
 
