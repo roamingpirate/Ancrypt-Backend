@@ -1,0 +1,24 @@
+{
+  "metadata": {
+    "soundFile": "C:\\Users\\ankit.pandit\\Pictures\\MaterialBackend\\public\\audios\\1\\dialog_130.wav",
+    "duration": 2.63
+  },
+  "mouthCues": [
+    { "start": 0.00, "end": 0.11, "value": "X" },
+    { "start": 0.11, "end": 0.38, "value": "D" },
+    { "start": 0.38, "end": 0.59, "value": "C" },
+    { "start": 0.59, "end": 0.73, "value": "E" },
+    { "start": 0.73, "end": 0.80, "value": "G" },
+    { "start": 0.80, "end": 0.87, "value": "E" },
+    { "start": 0.87, "end": 1.01, "value": "C" },
+    { "start": 1.01, "end": 1.10, "value": "A" },
+    { "start": 1.10, "end": 1.71, "value": "B" },
+    { "start": 1.71, "end": 1.78, "value": "G" },
+    { "start": 1.78, "end": 1.92, "value": "B" },
+    { "start": 1.92, "end": 2.00, "value": "A" },
+    { "start": 2.00, "end": 2.06, "value": "B" },
+    { "start": 2.06, "end": 2.25, "value": "C" },
+    { "start": 2.25, "end": 2.32, "value": "B" },
+    { "start": 2.32, "end": 2.63, "value": "X" }
+  ]
+}

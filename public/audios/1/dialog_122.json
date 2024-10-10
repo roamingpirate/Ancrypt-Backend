@@ -1,0 +1,21 @@
+{
+  "metadata": {
+    "soundFile": "C:\\Users\\ankit.pandit\\Pictures\\MaterialBackend\\public\\audios\\1\\dialog_122.wav",
+    "duration": 1.61
+  },
+  "mouthCues": [
+    { "start": 0.00, "end": 0.04, "value": "X" },
+    { "start": 0.04, "end": 0.11, "value": "B" },
+    { "start": 0.11, "end": 0.17, "value": "F" },
+    { "start": 0.17, "end": 0.31, "value": "B" },
+    { "start": 0.31, "end": 0.38, "value": "G" },
+    { "start": 0.38, "end": 0.52, "value": "F" },
+    { "start": 0.52, "end": 0.66, "value": "B" },
+    { "start": 0.66, "end": 0.74, "value": "A" },
+    { "start": 0.74, "end": 0.95, "value": "C" },
+    { "start": 0.95, "end": 1.02, "value": "B" },
+    { "start": 1.02, "end": 1.16, "value": "C" },
+    { "start": 1.16, "end": 1.44, "value": "B" },
+    { "start": 1.44, "end": 1.61, "value": "X" }
+  ]
+}

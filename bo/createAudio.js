@@ -83,16 +83,16 @@ const lipSyncMessage = async (pid,i, j,k) => {
                     console.log("Current DIalog: " + dialog);
                     const fileName = `./public/audios/${projectId}/dialog_${k}${i}${j}.mp3`;
 
-                    const audio = await elevenlabs.generate({
-                      voice: isFemale?"Rachel":"Chris",
-                      text: dialog,
-                      model_id: "eleven_monolingual_v1"
-                    });
+                    // const audio = await elevenlabs.generate({
+                    //   voice: isFemale?"Rachel":"Chris",
+                    //   text: dialog,
+                    //   model_id: "eleven_monolingual_v1"
+                    // });
 
-                    const fileStream = createWriteStream(fileName);
-                    audio.pipe(fileStream);
+                    // const fileStream = createWriteStream(fileName);
+                    // audio.pipe(fileStream);
                     
-                    await lipSyncMessage(projectId,i, j,k);
+                    //await lipSyncMessage(projectId,i, j,k);
 
                     const currentAudioData = {
                       audio: await audioFileToBase64(fileName),
@@ -108,7 +108,8 @@ const lipSyncMessage = async (pid,i, j,k) => {
             audioData.push(SceneaudioData);
     }
   
-   console.log("pello");
+    console.log("pello");
+    console.log(audioData);
     return audioData;
   
    

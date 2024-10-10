@@ -1,29 +1,16 @@
 {
   "metadata": {
     "soundFile": "C:\\Users\\ankit.pandit\\Pictures\\MaterialBackend\\public\\audios\\1\\dialog_120.wav",
-    "duration": 2.63
+    "duration": 1.07
   },
   "mouthCues": [
-    { "start": 0.00, "end": 0.18, "value": "X" },
-    { "start": 0.18, "end": 0.24, "value": "B" },
-    { "start": 0.24, "end": 0.36, "value": "H" },
-    { "start": 0.36, "end": 0.57, "value": "B" },
-    { "start": 0.57, "end": 0.67, "value": "D" },
-    { "start": 0.67, "end": 0.71, "value": "C" },
-    { "start": 0.71, "end": 0.78, "value": "G" },
-    { "start": 0.78, "end": 0.92, "value": "B" },
-    { "start": 0.92, "end": 1.00, "value": "A" },
-    { "start": 1.00, "end": 1.09, "value": "C" },
-    { "start": 1.09, "end": 1.18, "value": "A" },
-    { "start": 1.18, "end": 1.37, "value": "B" },
-    { "start": 1.37, "end": 1.44, "value": "D" },
-    { "start": 1.44, "end": 1.58, "value": "B" },
-    { "start": 1.58, "end": 1.72, "value": "H" },
-    { "start": 1.72, "end": 1.79, "value": "D" },
-    { "start": 1.79, "end": 1.86, "value": "G" },
-    { "start": 1.86, "end": 2.21, "value": "C" },
-    { "start": 2.21, "end": 2.28, "value": "B" },
-    { "start": 2.28, "end": 2.35, "value": "C" },
-    { "start": 2.35, "end": 2.63, "value": "X" }
+    { "start": 0.00, "end": 0.08, "value": "X" },
+    { "start": 0.08, "end": 0.25, "value": "B" },
+    { "start": 0.25, "end": 0.39, "value": "G" },
+    { "start": 0.39, "end": 0.53, "value": "F" },
+    { "start": 0.53, "end": 0.60, "value": "B" },
+    { "start": 0.60, "end": 0.74, "value": "E" },
+    { "start": 0.74, "end": 1.02, "value": "B" },
+    { "start": 1.02, "end": 1.07, "value": "X" }
   ]
 }
