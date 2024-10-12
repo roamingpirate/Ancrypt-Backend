@@ -1,5 +1,6 @@
 import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 import dotenv from 'dotenv';
+//import { projects } from "elevenlabs/api";
 
 dotenv.config();
 
@@ -111,6 +112,53 @@ export const retriveAnimationScriptData = async (projectId) => {
         console.log("error"+err.message);
     }
 }
+
+export const uploadAudioFile = async (projectId,audioData) => {
+    const audioDataKey = `${projectId}/audio.json`;
+
+    try{
+        const params = {
+            Bucket: bucketName,
+            Key: audioDataKey,
+            Body: JSON.stringify(audioData),
+            ContentType: 'application/json'
+        }
+
+        const data = await s3.send(new PutObjectCommand(params));
+        console.log("Audio Uploaded Successfully");
+    }
+    catch(err)
+    {
+        console.log("Error in uploading Audio");
+        console.log(err.message);
+        throw err;
+    }   
+}
+
+
+export const retriveAudioFile = async (projectId) => {
+    const audioDataKey = `${projectId}/audio.json`;
+
+    try{
+        const command = new GetObjectCommand({
+            Bucket: bucketName,
+            Key: audioDataKey,
+          });
+
+          const dataStream = await s3.send(command);
+          const data = await streamToString(dataStream.Body);
+          
+          return {data: JSON.parse(data), status : 1};
+    }
+    catch(err)
+    {
+        console.log("File Dont Exist");
+        console.log(err.message);
+        return { data : "File dont exist", status : 0};
+    }   
+}
+
+
 
 
 

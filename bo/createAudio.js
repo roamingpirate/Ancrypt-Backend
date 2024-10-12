@@ -3,6 +3,10 @@ import { ElevenLabsClient} from "elevenlabs";
 import ffmpeg from 'fluent-ffmpeg';
 import ffmpegPath from 'ffmpeg-static';
 import { promises as fs , createWriteStream} from "fs";
+import { parentPort, workerData } from "worker_threads";
+import { uploadAudioFile } from '../database/s3.js';
+
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   // Coverting format
   const convertAudioFile = async (inputFile, outputFile) => {
@@ -69,6 +73,8 @@ const lipSyncMessage = async (pid,i, j,k) => {
   export const createAudio = async (projectId,animationScript) => {
     console.log("Creating audio");
     let audioData = [];
+    parentPort.postMessage("Running!");
+    let count =0;
 
     for(let k=0;k<animationScript.length;k++){
         const speechArr = animationScript[k].Script;
@@ -94,13 +100,16 @@ const lipSyncMessage = async (pid,i, j,k) => {
                     
                     //await lipSyncMessage(projectId,i, j,k);
 
+                    await delay(5000);
+
                     const currentAudioData = {
                       audio: await audioFileToBase64(fileName),
                       lipsync: await readJsonTranscript(
                         `./public/audios/${projectId}/dialog_${k}${i}${j}.json`
                       ),
                     };
-
+                    count= count +1;
+                    parentPort.postMessage(`${count} audio files created!`)
                     SpeechAudioData.push(currentAudioData);
                   }
               SceneaudioData.push(SpeechAudioData);
@@ -109,8 +118,19 @@ const lipSyncMessage = async (pid,i, j,k) => {
     }
   
     console.log("pello");
-    console.log(audioData);
-    return audioData;
-  
-   
+    console.log("audioData created");
+    //await uploadAudioFile(1,audioData);
+    // //return audioData;
+    try{
+      //await uploadAudioFile(1,audioData);
+    }
+    catch(err)
+    {
+       process.exit(1);
+    }
+    // process.exit(0);
+
   };
+
+
+  createAudio("1", workerData);
