@@ -1,16 +1,17 @@
 {
   "metadata": {
-    "soundFile": "C:\\Users\\ankit.pandit\\Pictures\\MaterialBackend\\public\\audios\\1\\dialog_010.wav",
+    "soundFile": "D:\\MyInterestingProject\\Ancrypt-Backend\\public\\audios\\1\\dialog_010.wav",
     "duration": 1.07
   },
   "mouthCues": [
-    { "start": 0.00, "end": 0.08, "value": "X" },
-    { "start": 0.08, "end": 0.21, "value": "C" },
-    { "start": 0.21, "end": 0.35, "value": "B" },
-    { "start": 0.35, "end": 0.42, "value": "C" },
-    { "start": 0.42, "end": 0.63, "value": "B" },
-    { "start": 0.63, "end": 0.70, "value": "E" },
-    { "start": 0.70, "end": 0.98, "value": "B" },
-    { "start": 0.98, "end": 1.07, "value": "X" }
+    { "start": 0.00, "end": 0.20, "value": "X" },
+    { "start": 0.20, "end": 0.25, "value": "B" },
+    { "start": 0.25, "end": 0.29, "value": "C" },
+    { "start": 0.29, "end": 0.38, "value": "A" },
+    { "start": 0.38, "end": 0.59, "value": "D" },
+    { "start": 0.59, "end": 0.66, "value": "B" },
+    { "start": 0.66, "end": 0.80, "value": "G" },
+    { "start": 0.80, "end": 0.87, "value": "C" },
+    { "start": 0.87, "end": 1.07, "value": "X" }
   ]
 }

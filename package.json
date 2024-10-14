@@ -17,6 +17,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.670.0",
     "@aws-sdk/client-s3": "^3.658.1",
     "@google/generative-ai": "^0.20.0",
     "cors": "^2.8.5",

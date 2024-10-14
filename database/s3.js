@@ -1,5 +1,6 @@
 import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 import dotenv from 'dotenv';
+import { getScriptChanges } from "./ddb.js";
 //import { projects } from "elevenlabs/api";
 
 dotenv.config();
@@ -140,6 +141,38 @@ export const retriveAudioFile = async (projectId) => {
     const audioDataKey = `${projectId}/audio.json`;
 
     try{
+
+        const command = new GetObjectCommand({
+            Bucket: bucketName,
+            Key: audioDataKey,
+          });
+
+          const dataStream = await s3.send(command);
+          const data = await streamToString(dataStream.Body);
+
+          const changesList = await getScriptChanges(projectId);
+          console.log(changesList);
+          if(changesList.length > 0)
+          {
+              return {data: "update audio file", status : 2}
+          }
+
+          
+          return {data: JSON.parse(data), status : 1};
+    }
+    catch(err)
+    {
+        console.log("File Dont Exist");
+        console.log(err.message);
+        return { data : "File dont exist", status : 0};
+    }   
+}
+
+
+export const getAudioFile = async (projectId) => {
+    const audioDataKey = `${projectId}/audio.json`;
+
+    try{
         const command = new GetObjectCommand({
             Bucket: bucketName,
             Key: audioDataKey,
@@ -148,7 +181,7 @@ export const retriveAudioFile = async (projectId) => {
           const dataStream = await s3.send(command);
           const data = await streamToString(dataStream.Body);
           
-          return {data: JSON.parse(data), status : 1};
+          return JSON.parse(data);
     }
     catch(err)
     {

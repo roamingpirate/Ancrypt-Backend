@@ -2,6 +2,7 @@ import express from 'express';
 import generateScript from '../api/scriptGenerator.js'; 
 import { uploadScriptData, retriveScriptData, uploadAnimationScriptData} from '../database/s3.js'; 
 import { createAnimationScript } from '../bo/scriptFunctions.js';
+import { getScriptChanges, updateScriptChanges } from '../database/ddb.js';
 
 const ScriptRouter = express.Router();
 ScriptRouter.use(express.json());
@@ -53,6 +54,34 @@ ScriptRouter.post('/update', async(req,res) => {
 ScriptRouter.post('/animationScript', (req,res) => {
     res.send("na");
     console.log("pello11");
+})
+
+
+ScriptRouter.post('/changes/:projectId', async(req,res) => {
+    const projectId = req.params.projectId;
+    const scriptChanges = req.body.changesList;
+    console.log(req.body);
+    try{
+           await updateScriptChanges(projectId,scriptChanges);
+           res.send("success");
+    }
+    catch(err)
+    {
+        res.status(400).send("error");
+    }
+})
+
+ScriptRouter.get('/changes/:projectId', async(req,res) => {
+    const projectId = req.params.projectId;
+    try{
+           const result = await getScriptChanges(projectId);
+           console.log(result);
+           res.send(result);
+    }
+    catch(err)
+    {
+        res.status(400).send("error");
+    }
 })
 
 

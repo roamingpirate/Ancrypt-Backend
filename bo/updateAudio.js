@@ -5,6 +5,7 @@ import ffmpegPath from 'ffmpeg-static';
 import { promises as fs , createWriteStream} from "fs";
 import { parentPort, workerData } from "worker_threads";
 import { uploadAudioFile } from '../database/s3.js';
+import { updateScriptChanges } from "../database/ddb.js";
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -70,67 +71,60 @@ const lipSyncMessage = async (pid,i, j,k) => {
   };
 
 
-  export const createAudio = async (projectId,animationScript) => {
+  export const updateAudio = async (projectId,data) => {
+    const {audioData,as: animationScript,changesList} = data;
     console.log("Creating audio");
-    let audioData = [];
+   // let audioData = [];
     parentPort.postMessage("Running!");
     let count =0;
 
-    for(let k=0;k<animationScript.length;k++){
-        const speechArr = animationScript[k].Script;
-        let SceneaudioData = [];
-            for (let i = 0; i < speechArr.length; i++) {
-                let SpeechAudioData = [];
-                const isFemale = speechArr[i].Speaker === "Garv" ? false : true;
-                const dialogArr = speechArr[i].Speech;
-          
-                  for (let j = 0; j < dialogArr.length; j++) {
-                    const dialog = dialogArr[j].Text;
-                    console.log("Current DIalog: " + dialog);
-                    const fileName = `./public/audios/${projectId}/dialog_${k}${i}${j}.mp3`;
-
-                    const audio = await elevenlabs.generate({
-                      voice: isFemale?"Rachel":"Chris",
-                      text: dialog,
-                      model_id: "eleven_monolingual_v1"
-                    });
-
-                    const fileStream = createWriteStream(fileName);
-                    audio.pipe(fileStream);
-                    
-                    await lipSyncMessage(projectId,i, j,k);
-
-                    await delay(5000);
-
-                    const currentAudioData = {
-                      audio: await audioFileToBase64(fileName),
-                      lipsync: await readJsonTranscript(
-                        `./public/audios/${projectId}/dialog_${k}${i}${j}.json`
-                      ),
-                    };
-                    count= count +1;
-                    parentPort.postMessage(`${count} audio files created!`)
-                    SpeechAudioData.push(currentAudioData);
-                  }
-              SceneaudioData.push(SpeechAudioData);
-            } 
-            audioData.push(SceneaudioData);
-    }
+    for(let i=0;i<changesList.length;i++) {
+        const sceneIndex = parseInt(changesList[i][0], 10);
+        const scriptSpeechIndex = parseInt(changesList[i][1], 10);
+        const speechArr = animationScript[sceneIndex].Script
+        let SpeechAudioData = [];
+        const isFemale = speechArr[scriptSpeechIndex].Speaker === "Michael" ? false : true;
+        const dialogArr = speechArr[scriptSpeechIndex].Speech;
   
-    console.log("pello");
-    console.log("audioData created");
-    //await uploadAudioFile(1,audioData);
-    // //return audioData;
-    try{
-      await uploadAudioFile(1,audioData);
-    }
-    catch(err)
-    {
-       process.exit(1);
-    }
-    // process.exit(0);
+          for (let j = 0; j < dialogArr.length; j++) {
+            const dialog = dialogArr[j].Text;
+            console.log("Current DIalog: " + dialog);
+            const fileName = `./public/audios/${projectId}/dialog_${sceneIndex}${scriptSpeechIndex}${j}.mp3`;
 
+            const audio = await elevenlabs.generate({
+              voice: isFemale?"Rachel":"Chris",
+              text: dialog,
+              model_id: "eleven_monolingual_v1"
+            });
+
+            const fileStream = createWriteStream(fileName);
+            audio.pipe(fileStream);
+            
+            await lipSyncMessage(projectId,scriptSpeechIndex, j,sceneIndex);
+
+            //await delay(5000);
+
+            const currentAudioData = {
+              audio: await audioFileToBase64(fileName),
+              lipsync: await readJsonTranscript(
+                `./public/audios/${projectId}/dialog_${sceneIndex}${scriptSpeechIndex}${j}.json`
+              ),
+            };
+            parentPort.postMessage(`${changesList[i]} audio files updated!`)
+            SpeechAudioData.push(currentAudioData);
+          }
+          audioData[sceneIndex][scriptSpeechIndex]= SpeechAudioData;
+    }
+
+      try{
+        await uploadAudioFile(1,audioData);
+        await updateScriptChanges(projectId, []);
+      }
+      catch(err)
+      {
+         process.exit(1);
+      }
   };
 
 
-  createAudio("1", workerData);
+  updateAudio("1", workerData);
