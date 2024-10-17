@@ -19,6 +19,7 @@
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.670.0",
     "@aws-sdk/client-s3": "^3.658.1",
+    "@google-cloud/text-to-speech": "^5.5.0",
     "@google/generative-ai": "^0.20.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",

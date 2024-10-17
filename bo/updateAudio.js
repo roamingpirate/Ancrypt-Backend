@@ -1,13 +1,30 @@
 import { exec } from "child_process";
-import { ElevenLabsClient} from "elevenlabs";
 import ffmpeg from 'fluent-ffmpeg';
 import ffmpegPath from 'ffmpeg-static';
 import { promises as fs , createWriteStream} from "fs";
 import { parentPort, workerData } from "worker_threads";
 import { uploadAudioFile } from '../database/s3.js';
+import dotenv from 'dotenv';
+import { TextToSpeechClient } from '@google-cloud/text-to-speech';
 import { updateScriptChanges } from "../database/ddb.js";
+import util from 'util';
+dotenv.config();
+
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+
+const writeFileAsync = (fileName, data) => {
+  return new Promise((resolve, reject) => {
+    fs.writeFile(fileName, data, (err) => {
+      if (err) {
+        reject(err);  // Reject if there's an error
+      } else {
+        resolve();  // Resolve if the operation is successful
+      }
+    });
+  });
+};
 
   // Coverting format
   const convertAudioFile = async (inputFile, outputFile) => {
@@ -49,12 +66,8 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
     return data.toString("base64");
   };
 
-const elevenLabsApiKey = "sk_26d2102972203c110de41dc6ddb69d197e2896bb6feebe44";
-const MalevoiceID = "cjVigY5qzO86Huf0OWal";
-const FemaleVoiceId = "cgSgspJ2msm6clMCkdW9";
-const elevenlabs = new ElevenLabsClient({
-  apiKey: elevenLabsApiKey 
-})
+
+  const textToSpeechClient = new TextToSpeechClient();
 
 
 const lipSyncMessage = async (pid,i, j,k) => {
@@ -62,14 +75,13 @@ const lipSyncMessage = async (pid,i, j,k) => {
     console.log(`Starting conversion for message ${k}${i}${j}`);
     const inputFilePath = `./public/audios/${pid}/dialog_${k}${i}${j}.mp3`;
     const outputFilePath = `./public/audios/${pid}/dialog_${k}${i}${j}.wav`
-    await convertAudioFile(inputFilePath,outputFilePath);
+   // await convertAudioFile(inputFilePath,outputFilePath);
     console.log(`Conversion done in ${new Date().getTime() - time}ms`);
     await execCommand(
       `bin\\rhubarb.exe -f json -o .\\public\\audios\\${pid}\\dialog_${k}${i}${j}.json .\\public\\audios\\${pid}\\dialog_${k}${i}${j}.wav -r phonetic`
     );
     console.log(`Lip sync done in ${new Date().getTime() - time}ms`);
   };
-
 
   export const updateAudio = async (projectId,data) => {
     const {audioData,as: animationScript,changesList} = data;
@@ -89,20 +101,25 @@ const lipSyncMessage = async (pid,i, j,k) => {
           for (let j = 0; j < dialogArr.length; j++) {
             const dialog = dialogArr[j].Text;
             console.log("Current DIalog: " + dialog);
-            const fileName = `./public/audios/${projectId}/dialog_${sceneIndex}${scriptSpeechIndex}${j}.mp3`;
+            const fileName = `./public/audios/${projectId}/dialog_${sceneIndex}${scriptSpeechIndex}${j}.wav`;
 
-            const audio = await elevenlabs.generate({
-              voice: isFemale?"Rachel":"Chris",
-              text: dialog,
-              model_id: "eleven_monolingual_v1"
-            });
 
-            const fileStream = createWriteStream(fileName);
-            audio.pipe(fileStream);
+            const request = {
+              input: {text: dialog},
+              voice: {languageCode: 'en-US', ssmlGender: 'FEMALE'},
+              audioConfig: {audioEncoding: 'LINEAR16'},
+            };
+
+            const [response] = await textToSpeechClient.synthesizeSpeech(request);
+            //console.log(response.audioContent);
+          //  const writeFile = util.promisify(fs.writeFile);
+            await fs.writeFile(fileName, response.audioContent);
+            console.log('File written successfully!');
+           // await delay(10000);
             
             await lipSyncMessage(projectId,scriptSpeechIndex, j,sceneIndex);
 
-            //await delay(5000);
+            await delay(500);
 
             const currentAudioData = {
               audio: await audioFileToBase64(fileName),
