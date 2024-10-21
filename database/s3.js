@@ -1,6 +1,7 @@
-import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import dotenv from 'dotenv';
 import { getScriptChanges } from "./ddb.js";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 //import { projects } from "elevenlabs/api";
 
 dotenv.config();
@@ -58,6 +59,49 @@ export const retriveScriptData = async (projectId) => {
         const command = new GetObjectCommand({
             Bucket: bucketName,
             Key: scriptDataKey,
+          });
+
+          const dataStream = await s3.send(command);
+          const data = await streamToString(dataStream.Body);
+          
+          return JSON.parse(data);
+      
+    }
+    catch(err){
+        console.log("error"+err.message);
+    }
+}
+
+export const uploadSpeakerData = async (projectId,speakerData) => {
+    const speakerDataKey = `${projectId}/speaker.json`;
+
+    try{
+        const params = {
+            Bucket: bucketName,
+            Key: speakerDataKey,
+            Body: JSON.stringify(speakerData),
+            ContentType: 'application/json'
+        }
+
+        const data = await s3.send(new PutObjectCommand(params));
+        console.log("speaker data Uploaded Successfully");
+    }
+    catch(err)
+    {
+        console.log("Error in uploading speakerData");
+        console.log(err.message);
+    }
+
+}
+
+
+export const retriveSpeakerData = async (projectId) => {
+    const speakerDataKey = `${projectId}/speaker.json`;
+
+    try{
+        const command = new GetObjectCommand({
+            Bucket: bucketName,
+            Key: speakerDataKey,
           });
 
           const dataStream = await s3.send(command);
@@ -190,6 +234,117 @@ export const getAudioFile = async (projectId) => {
         return { data : "File dont exist", status : 0};
     }   
 }
+
+export const deleteAudioFile = async (projectId) => {
+    const audioDataKey = `${projectId}/audio.json`;
+
+    try {
+        const command = new DeleteObjectCommand({
+            Bucket: bucketName,
+            Key: audioDataKey,
+        });
+
+        await s3.send(command); // Send the delete command
+        console.log(`Successfully deleted ${audioDataKey}`);
+        return { message: "File deleted successfully", status: 1 };
+    } catch (err) {
+        console.log("Error deleting file");
+        console.log(err.message);
+        return { message: "File doesn't exist or could not be deleted", status: 0 };
+    }
+};
+
+export const uploadImageFile = async (projectId,base64Image,ImageNo) => {
+
+    const imageDataKey = `${projectId}/back${ImageNo}.png`;
+    const imageBuffer = Buffer.from(base64Image, 'base64');
+
+    try{
+        const params = {
+            Bucket: bucketName,
+            Key: imageDataKey,
+            Body: imageBuffer,
+            ContentEncoding: 'base64',
+            ContentType: 'image/png'    
+        }
+
+        const data = await s3.send(new PutObjectCommand(params));
+        console.log("Image Uploaded Successfully");
+    }
+    catch(err)
+    {
+        console.log("Error in uploading Image");
+        console.log(err.message);
+        throw err;
+    }   
+}
+
+export const uploadBackgroundImagePrompts = async (projectId, backgroundPrompts) => {
+    const bpKey = `${projectId}/backgroundPrompts.json`;
+
+    try{
+        const params = {
+            Bucket: bucketName,
+            Key: bpKey,
+            Body: JSON.stringify(backgroundPrompts),
+            ContentType: 'application/json'
+        }
+
+        const data = await s3.send(new PutObjectCommand(params));
+        console.log("Background Prompt Uploaded Successfully");
+    }
+    catch(err)
+    {
+        console.log("Error in uploading Background Prompt");
+        console.log(err.message);
+        throw err;
+    }   
+}
+
+export const getBackgroundImagePrompt = async (projectId) => {
+    const bpKey = `${projectId}/backgroundPrompts.json`;
+
+    try{
+        const command = new GetObjectCommand({
+            Bucket: bucketName,
+            Key: bpKey,
+          });
+
+          const dataStream = await s3.send(command);
+          const data = await streamToString(dataStream.Body);
+          
+          return JSON.parse(data);
+    }
+    catch(err)
+    {
+        console.log("File Dont Exist");
+        console.log(err.message);
+        return { data : "File dont exist", status : 0};
+    }   
+}
+
+
+export const getImageUrl = async (projectId, ImageNo) => {
+    const imageDataKey = `${projectId}/back${ImageNo}.png`;
+    try{
+        const params = {
+            Bucket: bucketName,
+            Key: imageDataKey,
+        }
+
+        const command = new GetObjectCommand(params);
+        const url = await getSignedUrl(s3, command, { expiresIn: 36000 });
+        console.log("Pre-signed URL:", url);
+        return url;
+    }
+    catch(err)
+    {
+        console.error("Error generating pre-signed URL:", err);
+        console.log(err.message);
+        throw err;
+    } 
+}
+
 
 
 

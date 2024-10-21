@@ -1,8 +1,8 @@
 import express from 'express';
 import generateScript from '../api/scriptGenerator.js'; 
-import { uploadScriptData, retriveScriptData, uploadAnimationScriptData} from '../database/s3.js'; 
+import { uploadScriptData, retriveScriptData, uploadAnimationScriptData,uploadBackgroundImagePrompts, deleteAudioFile} from '../database/s3.js'; 
 import { createAnimationScript } from '../bo/scriptFunctions.js';
-import { getScriptChanges, updateScriptChanges } from '../database/ddb.js';
+import { getScriptChanges, updateBackgroundImageStatus, updateScriptChanges } from '../database/ddb.js';
 
 const ScriptRouter = express.Router();
 ScriptRouter.use(express.json());
@@ -23,6 +23,12 @@ ScriptRouter.post('/', async (req,res) => {
     try{
         let scriptData = await generateScript(prompt);
         scriptData = JSON.parse(scriptData);
+        await deleteAudioFile(1);
+        updateBackgroundImageStatus(1,0);
+        // extracting BGI prompts 
+        const backgroundPrompts = scriptData.scenes.map(scene => scene.backgroundImagePrompt);
+        console.log(backgroundPrompts);
+        await uploadBackgroundImagePrompts(1, { bp : backgroundPrompts});
         res.json(scriptData);   
         uploadScriptData("1",scriptData);
         const animationScript = await createAnimationScript(scriptData);

@@ -3,9 +3,12 @@ import cors from 'cors'
 import ScriptRouter from './routes/scriptRoute.js';
 import AnimationScriptRouter from './routes/animatedScriptRoute.js';
 import AudioRouter from './routes/audioRoute.js';
-import { retriveAnimationScriptData } from './database/s3.js';
+import BackgroundRouter from './routes/backgroundRoute.js';
+import { getImageUrl, retriveAnimationScriptData, uploadImageFile } from './database/s3.js';
 //import { createAudio } from './bo/createAudio.js';
 import { ElevenLabsClient, play } from "elevenlabs";
+import getGeneratedImage from './api/backgroundGenerator.js';
+import SpeakerRouter from './routes/speakerRoute.js';
 
 const elevenlabs = new ElevenLabsClient({
   apiKey: "sk_26d2102972203c110de41dc6ddb69d197e2896bb6feebe44" // Defaults to process.env.ELEVENLABS_API_KEY
@@ -18,6 +21,8 @@ app.use(cors());
 app.use('/script',ScriptRouter);
 app.use('/animationScript',AnimationScriptRouter);
 app.use('/audio',AudioRouter);
+app.use('/background',BackgroundRouter);
+app.use('/speaker',SpeakerRouter);
 
 app.get('/', (req,res) => {
     console.log("pell");
@@ -28,6 +33,12 @@ import { TextToSpeechClient } from '@google-cloud/text-to-speech';
 dotenv.config();
 import fs from 'fs';
 import util from 'util';
+import getBackgroundImagePrompt from './api/backgroundPromptcreator.js';
+import {createBackgroundImage} from './bo/createBackgroundImage.js';
+import { getBackgroundImageStatus, updateBackgroundImageStatus } from './database/ddb.js';
+
+
+
 
 const textToSpeechClient = new TextToSpeechClient();
 
@@ -58,4 +69,13 @@ const createAudio = async () => {
 
 app.listen(3000, async () => {
   //createAudio();
+  if(1){
+   // getImageUrl(1,1);
+    //await createBackgroundImage(1);
+    //await updateBackgroundImageStatus(1, 2);
+   // getBackgroundImageStatus(1);
+     //getBackgroundImagePrompt("A lively kitchen scene with Bob and Pam chopping vegetables, stirring pots, and laughing as they cook the soup together.")
+      //const base64image = await getGeneratedImage("A lively kitchen scene with Bob and Pam chopping vegetables, stirring pots, and laughing as they cook the soup together.");
+      //await uploadImageFile(1,base64image,0);
+  }
 });

@@ -104,7 +104,7 @@ const lipSyncMessage = async (pid,i, j,k) => {
 
                     const request = {
                       input: {text: dialog},
-                      voice: {languageCode: 'en-US', ssmlGender: 'FEMALE'},
+                      voice: {languageCode: 'en-US', "name": "en-US-Journey-F"},
                       audioConfig: {audioEncoding: 'LINEAR16'},
                     };
 

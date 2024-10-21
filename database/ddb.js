@@ -61,3 +61,55 @@ export const getScriptChanges = async (projectId) => {
         throw err;
     }
 }
+
+
+export const updateBackgroundImageStatus = async (projectId, status) => {
+    const params = {
+        TableName : 'ankryptProjects',
+        Key: {
+            'projectId': {S : projectId.toString()},
+            'userId': {S : '1'},
+        },
+        UpdateExpression: 'SET backgroundStatus = :bs',
+        ExpressionAttributeValues: {
+            ':bs': { N : status.toString() }
+        },
+        ReturnValues: 'UPDATED_NEW'
+    }
+
+
+    try {
+        const command = new UpdateItemCommand(params);
+        const data = await ddb.send(command);
+        console.log('Update succeeded:', data);
+      } catch (err) {
+        console.error('Update failed:', err);
+      }
+}
+
+
+export const getBackgroundImageStatus = async (projectId) => {
+    const params = {
+        TableName : 'ankryptProjects',
+        Key: {
+            'projectId': {S : projectId.toString()},
+            'userId': {S : '1'},
+        }
+    }
+    try {
+        const command = new GetItemCommand(params);
+        const data = await ddb.send(command);
+        if (data.Item) {
+            console.log('Fetch succeeded:', data.Item);
+            const status = data.Item.backgroundStatus.N;
+            console.log('Status:', status);
+            return status;
+        } else {
+            console.log('Item not found');
+            return [];
+        }
+    } catch (err) {
+        console.error('Fetch failed:', err);
+        throw err;
+    }
+}

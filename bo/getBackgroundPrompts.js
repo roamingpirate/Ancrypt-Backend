@@ -1,0 +1,5 @@
+
+
+const getBackgroundPrompts = (script) => {
+    
+}
