@@ -98,7 +98,14 @@ const lipSyncMessage = async (pid,i, j,k) => {
                 const dialogArr = speechArr[i].Speech;
           
                   for (let j = 0; j < dialogArr.length; j++) {
-                     const dialog = dialogArr[j].Text;
+                     let dialog = dialogArr[j].Text;
+
+                     if(dialog.trim() == "")
+                     {
+                         dialog = "a"
+                     }
+
+                     parentPort.postMessage(`${dialog} dialog`)
                     console.log("Current DIalog: " + dialog);
                     const fileName = `./public/audios/${projectId}/dialog_${k}${i}${j}.wav`;
 

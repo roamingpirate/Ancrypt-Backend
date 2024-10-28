@@ -99,7 +99,11 @@ const lipSyncMessage = async (pid,i, j,k) => {
         const dialogArr = speechArr[scriptSpeechIndex].Speech;
   
           for (let j = 0; j < dialogArr.length; j++) {
-            const dialog = dialogArr[j].Text;
+            let dialog = dialogArr[j].Text;
+            if(dialog.trim() == "")
+              {
+                  dialog = "a"
+              }
             console.log("Current DIalog: " + dialog);
             const fileName = `./public/audios/${projectId}/dialog_${sceneIndex}${scriptSpeechIndex}${j}.wav`;
 
