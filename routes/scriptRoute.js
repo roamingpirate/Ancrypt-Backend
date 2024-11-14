@@ -7,8 +7,9 @@ import { getScriptChanges, updateBackgroundImageStatus, updateScriptChanges } fr
 const ScriptRouter = express.Router();
 ScriptRouter.use(express.json());
 
-ScriptRouter.get('/', async (req,res) => {
-    let scriptData = await retriveScriptData("1");
+ScriptRouter.get('/:projectId', async (req,res) => {
+    const projectId = req.params.projectId;
+    let scriptData = await retriveScriptData(projectId);
     console.log(typeof(scriptData));
     if(typeof(scriptData) == 'string')
     {
@@ -17,22 +18,24 @@ ScriptRouter.get('/', async (req,res) => {
     res.json(scriptData);
 })
 
-ScriptRouter.post('/', async (req,res) => {
+ScriptRouter.post('/:projectId', async (req,res) => {
     const prompt = req.body;
-    console.log('Generating Script');
+    const projectId = req.params.projectId;
+    console.log('Generating Scriptt');
     try{
         let scriptData = await generateScript(prompt);
+        console.log("gene script", scriptData)
         scriptData = JSON.parse(scriptData);
-        await deleteAudioFile(1);
-        updateBackgroundImageStatus(1,0);
+        await deleteAudioFile(projectId);
+        updateBackgroundImageStatus(projectId,0);
         // extracting BGI prompts 
         const backgroundPrompts = scriptData.scenes.map(scene => scene.backgroundImagePrompt);
         console.log(backgroundPrompts);
-        await uploadBackgroundImagePrompts(1, { bp : backgroundPrompts});
+        await uploadBackgroundImagePrompts(projectId, { bp : backgroundPrompts});
         res.json(scriptData);   
-        uploadScriptData("1",scriptData);
+        uploadScriptData(projectId,scriptData);
         const animationScript = await createAnimationScript(scriptData);
-        uploadAnimationScriptData("1",animationScript);
+        uploadAnimationScriptData(projectId,animationScript);
     }
     catch(err)
     {
@@ -40,26 +43,20 @@ ScriptRouter.post('/', async (req,res) => {
     }
 })
 
-ScriptRouter.post('/update', async(req,res) => {
+ScriptRouter.post('/update/:projectId', async(req,res) => {
+    const projectId = req.params.projectId;
     const updatedScript = req.body;
     console.log("tello");
     try{
-        uploadScriptData("1",updatedScript);
+        uploadScriptData(projectId,updatedScript);
         res.send("success"); 
         const animationScript = await createAnimationScript(updatedScript);
-        uploadAnimationScriptData("1",animationScript);  
+        uploadAnimationScriptData(projectId,animationScript);  
     }
     catch(err){
         console.log(err);
         res.status(400).send("error");
     }
-})
-
-
-
-ScriptRouter.post('/animationScript', (req,res) => {
-    res.send("na");
-    console.log("pello11");
 })
 
 

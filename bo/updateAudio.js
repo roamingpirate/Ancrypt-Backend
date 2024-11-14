@@ -3,7 +3,7 @@ import ffmpeg from 'fluent-ffmpeg';
 import ffmpegPath from 'ffmpeg-static';
 import { promises as fs , createWriteStream} from "fs";
 import { parentPort, workerData } from "worker_threads";
-import { uploadAudioFile } from '../database/s3.js';
+import { retriveSpeakerData, uploadAudioFile } from '../database/s3.js';
 import dotenv from 'dotenv';
 import { TextToSpeechClient } from '@google-cloud/text-to-speech';
 import { updateScriptChanges } from "../database/ddb.js";
@@ -83,20 +83,29 @@ const lipSyncMessage = async (pid,i, j,k) => {
     console.log(`Lip sync done in ${new Date().getTime() - time}ms`);
   };
 
+  const isFemaleSpeaker = (speakerName, speakersList) => {
+    const speaker = speakersList.find(s => s.avatarName.toLowerCase() === speakerName.toLowerCase());
+    return speaker ? speaker.vgender === "female" : true;
+  };
+
   export const updateAudio = async (projectId,data) => {
     const {audioData,as: animationScript,changesList} = data;
     console.log("Creating audio");
    // let audioData = [];
     parentPort.postMessage("Running!");
     let count =0;
+    let speakerList = await retriveSpeakerData(projectId);
+    speakerList = speakerList.speakerList;
+    console.log(speakerList);
 
     for(let i=0;i<changesList.length;i++) {
         const sceneIndex = parseInt(changesList[i][0], 10);
         const scriptSpeechIndex = parseInt(changesList[i][1], 10);
         const speechArr = animationScript[sceneIndex].Script
         let SpeechAudioData = [];
-        const isFemale = speechArr[scriptSpeechIndex].Speaker === "Michael" ? false : true;
+        const isFemale = isFemaleSpeaker(speechArr[i].Speaker, speakerList);
         const dialogArr = speechArr[scriptSpeechIndex].Speech;
+        console.log("is f "+ isFemale);
   
           for (let j = 0; j < dialogArr.length; j++) {
             let dialog = dialogArr[j].Text;
@@ -107,10 +116,16 @@ const lipSyncMessage = async (pid,i, j,k) => {
             console.log("Current DIalog: " + dialog);
             const fileName = `./public/audios/${projectId}/dialog_${sceneIndex}${scriptSpeechIndex}${j}.wav`;
 
+            const directoryPath = `./public/audios/${projectId}/`;
+              try {
+                await fs.mkdir(directoryPath, { recursive: true });
+            } catch (err) {
+                console.error(`Error creating directory: ${err}`);
+            }
 
             const request = {
               input: {text: dialog},
-              voice: {languageCode: 'en-US', ssmlGender: 'NEUTRAL'},
+              voice: {languageCode: 'en-US', "name": isFemale? "en-US-Journey-F": "en-US-Journey-D"},
               audioConfig: {audioEncoding: 'LINEAR16'},
             };
 
@@ -131,14 +146,14 @@ const lipSyncMessage = async (pid,i, j,k) => {
                 `./public/audios/${projectId}/dialog_${sceneIndex}${scriptSpeechIndex}${j}.json`
               ),
             };
-            parentPort.postMessage(`${changesList[i]} audio files updated!`)
+            parentPort.postMessage(`${changesList[i]} audio files updatdd!`)
             SpeechAudioData.push(currentAudioData);
           }
           audioData[sceneIndex][scriptSpeechIndex]= SpeechAudioData;
     }
 
       try{
-        await uploadAudioFile(1,audioData);
+        await uploadAudioFile(projectId,audioData);
         await updateScriptChanges(projectId, []);
       }
       catch(err)
@@ -148,4 +163,4 @@ const lipSyncMessage = async (pid,i, j,k) => {
   };
 
 
-  updateAudio("1", workerData);
+  updateAudio(workerData.projectId, workerData);

@@ -1,0 +1,14 @@
+{
+  "metadata": {
+    "soundFile": "D:\\MyInterestingProject\\Ancrypt-Backend\\public\\audios\\ancript_4\\dialog_124.wav",
+    "duration": 1.12
+  },
+  "mouthCues": [
+    { "start": 0.00, "end": 0.47, "value": "X" },
+    { "start": 0.47, "end": 0.57, "value": "B" },
+    { "start": 0.57, "end": 0.64, "value": "F" },
+    { "start": 0.64, "end": 0.78, "value": "D" },
+    { "start": 0.78, "end": 1.06, "value": "B" },
+    { "start": 1.06, "end": 1.12, "value": "X" }
+  ]
+}

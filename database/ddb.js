@@ -1,5 +1,6 @@
-import { DynamoDBClient, UpdateItemCommand, GetItemCommand} from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient, UpdateItemCommand, GetItemCommand, PutItemCommand} from "@aws-sdk/client-dynamodb";
 import dotenv from 'dotenv';
+import { GetavatarCreatorToken } from "../bo/avatarCreatorToken.js";
 dotenv.config();
 
 const ddb = new DynamoDBClient({
@@ -113,3 +114,213 @@ export const getBackgroundImageStatus = async (projectId) => {
         throw err;
     }
 }
+
+
+export const addNewUser = async (userId) => {
+    const item = {
+        userId: { S: userId.toString() },
+        projectList: { L: [] },
+    };
+
+    try {
+        const getCommand = new GetItemCommand({
+            TableName: "userInfo",
+            Key: {
+                userId: { S: userId.toString() },
+            },
+        });
+
+        const existingUser = await ddb.send(getCommand);
+
+        if (existingUser.Item) {
+            console.log("User already exists");
+            return "User already exists";
+        }
+
+        const putCommand = new PutItemCommand({
+            TableName: "userInfo",
+            Item: item,
+        });
+        await ddb.send(putCommand);
+        console.log("User added");
+        return "success";
+    } catch (err) {
+        console.error('Failed to add user:', err);
+        throw err;
+    }
+};
+
+
+export const addProjectToUser = async (userId, projectName) => {
+    try {
+      const getItemCommand = new GetItemCommand({
+        TableName: "userInfo",
+        Key: {
+          userId: { S: userId.toString() },
+        },
+        ProjectionExpression: "projectList",
+      });
+      
+      const data = await ddb.send(getItemCommand);
+      const projectList = data.Item?.projectList?.L || [];
+      const newIndex = projectList.length;
+      const projectId = `ancript_${newIndex + 1}`;
+  
+      const project = {
+        M: {
+          projectName: { S: projectName },
+          projectId: { S: projectId },
+        }
+      };
+  
+      const updateCommand = new UpdateItemCommand({
+        TableName: "userInfo",
+        Key: {
+          userId: { S: userId.toString() },
+        },
+        UpdateExpression: "SET projectList = list_append(projectList, :newProject)",
+        ExpressionAttributeValues: {
+          ":newProject": { L: [project] },
+        },
+        ReturnValues: "UPDATED_NEW",
+      });
+
+      await addNewProject(projectId,userId, projectName)
+  
+      const updateResult = await ddb.send(updateCommand);
+      console.log("Project added to user:", updateResult);
+      return projectId;
+    } catch (err) {
+      console.error("Failed to add project to user:", err);
+      throw err;
+    }
+};
+
+
+export const getProjectList = async (userId) => {
+    try {
+      const command = new GetItemCommand({
+        TableName: "userInfo",
+        Key: {
+          userId: { S: userId.toString() },
+        },
+        ProjectionExpression: "projectList",
+      });
+  
+      const data = await ddb.send(command);
+      const projectList = data.Item?.projectList?.L || []; 
+
+      const simplifiedProjectList = projectList.map(item => ({
+        projectName: item.M.projectName.S,
+        projectId: item.M.projectId.S,
+      }));
+  
+      return simplifiedProjectList;
+    } catch (err) {
+      console.error("Failed to fetch project list:", err);
+      throw err;
+    }
+  };
+
+  export const getOrCreateAvatarToken = async (userId) => {
+    try {
+      const getCommand = new GetItemCommand({
+        TableName: "userInfo",
+        Key: {
+          userId: { S: userId.toString() },
+        },
+        ProjectionExpression: "avatarCreationToken",
+      });
+  
+      const data = await ddb.send(getCommand);
+      const token = data.Item?.avatarCreationToken?.S;
+  
+      if (token) {
+        return token;
+      }
+  
+      const newToken = await GetavatarCreatorToken();
+  
+      const updateCommand = new UpdateItemCommand({
+        TableName: "userInfo",
+        Key: {
+          userId: { S: userId.toString() },
+        },
+        UpdateExpression: "SET avatarCreationToken = :newToken",
+        ExpressionAttributeValues: {
+          ":newToken": { S: newToken },
+        },
+        ReturnValues: "UPDATED_NEW",
+      });
+  
+      await ddb.send(updateCommand);
+  
+      return newToken;
+    } catch (err) {
+      console.error("Failed to fetch or create avatar creation token:", err);
+      throw err;
+    }
+  };
+
+  export const addNewProject = async (projectId, userId, projectName) => {
+    const item = {
+        projectId: { S: projectId.toString() },
+        userId: { S: userId.toString() },
+        projectName : { S: projectName.toString() }
+    };
+
+    try {
+        const getCommand = new GetItemCommand({
+            TableName: "ankryptProjects",
+            Key: {
+                projectId: { S: projectId.toString() },
+                userId: { S: userId.toString() },
+            },
+        });
+
+        const existingProject = await ddb.send(getCommand);
+
+        if (existingProject.Item) {
+            console.log("Project already exists");
+            return "Project already exists";
+        }
+
+        const putCommand = new PutItemCommand({
+            TableName: "ankryptProjects",
+            Item: item,
+        });
+
+        await ddb.send(putCommand);
+        console.log("Project added");
+        return "success";
+    } catch (err) {
+        console.error('Failed to add project:', err);
+        throw err;
+    }
+};
+
+
+export const fetchProjectDetails = async (userId, projectId) => {
+    try {
+        const command = new GetItemCommand({
+            TableName: "ankryptProjects",
+            Key: {
+                userId: { S: userId.toString() },
+                projectId: { S: projectId.toString() }
+            }
+        });
+
+        const data = await ddb.send(command);
+
+        if (!data.Item) {
+            return { status: 0, message: 'table not present' };
+        }
+
+        const projectName = data.Item.projectName ? data.Item.projectName.S : null;
+
+        return { status: 1, projectName};
+    } catch (err) {
+        console.error("Failed to fetch project details:", err);
+        throw err;
+    }
+};

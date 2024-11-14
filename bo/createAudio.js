@@ -3,7 +3,7 @@ import ffmpeg from 'fluent-ffmpeg';
 import ffmpegPath from 'ffmpeg-static';
 import { promises as fs , createWriteStream} from "fs";
 import { parentPort, workerData } from "worker_threads";
-import { uploadAudioFile } from '../database/s3.js';
+import { retriveScriptData, retriveSpeakerData, uploadAudioFile } from '../database/s3.js';
 import dotenv from 'dotenv';
 import { TextToSpeechClient } from '@google-cloud/text-to-speech';
 import util from 'util';
@@ -82,20 +82,31 @@ const lipSyncMessage = async (pid,i, j,k) => {
     console.log(`Lip sync done in ${new Date().getTime() - time}ms`);
   };
 
+  const isFemaleSpeaker = (speakerName, speakersList) => {
+    const speaker = speakersList.find(s => s.avatarName.toLowerCase() === speakerName.toLowerCase());
+    return speaker ? speaker.vgender === "female" : true;
+  };
+  
+  
+
 
   export const createAudio = async (projectId,animationScript) => {
     console.log("Creating audio");
     let audioData = [];
     parentPort.postMessage("Running!");
     let count =0;
+    let speakerList = await retriveSpeakerData(projectId);
+    speakerList = speakerList.speakerList;
+    console.log(speakerList);
 
     for(let k=0;k<animationScript.length;k++){
         const speechArr = animationScript[k].Script;
         let SceneaudioData = [];
             for (let i = 0; i < speechArr.length; i++) {
                 let SpeechAudioData = [];
-                const isFemale = speechArr[i].Speaker === "Garv" ? false : true;
+                const isFemale = isFemaleSpeaker(speechArr[i].Speaker, speakerList);
                 const dialogArr = speechArr[i].Speech;
+                console.log("is f "+ isFemale);
           
                   for (let j = 0; j < dialogArr.length; j++) {
                      let dialog = dialogArr[j].Text;
@@ -109,9 +120,17 @@ const lipSyncMessage = async (pid,i, j,k) => {
                     console.log("Current DIalog: " + dialog);
                     const fileName = `./public/audios/${projectId}/dialog_${k}${i}${j}.wav`;
 
+                    
+                        const directoryPath = `./public/audios/${projectId}/`;
+                        try {
+                          await fs.mkdir(directoryPath, { recursive: true });
+                        } catch (err) {
+                            console.error(`Error creating directory: ${err}`);
+                        }
+
                     const request = {
                       input: {text: dialog},
-                      voice: {languageCode: 'en-US', "name": "en-US-Journey-F"},
+                      voice: {languageCode: 'en-US', "name": isFemale? "en-US-Journey-F": "en-US-Journey-D"},
                       audioConfig: {audioEncoding: 'LINEAR16'},
                     };
 
@@ -146,7 +165,7 @@ const lipSyncMessage = async (pid,i, j,k) => {
     //await uploadAudioFile(1,audioData);
     // //return audioData;
     try{
-      await uploadAudioFile(1,audioData);
+      await uploadAudioFile(projectId,audioData);
     }
     catch(err)
     {
@@ -157,4 +176,4 @@ const lipSyncMessage = async (pid,i, j,k) => {
   };
 
 
-  createAudio("1", workerData);
+  createAudio(workerData.projectId, workerData.as);

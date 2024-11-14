@@ -28,9 +28,10 @@ AudioRouter.get('/create/:projectId', async (req,res) => {
     let worker;
     try{
         const projectId = req.params.projectId;
-        const as = await retriveAnimationScriptData("1");
+        await updateScriptChanges(projectId, []);
+        const as = await retriveAnimationScriptData(projectId);
         const workerPath = join(__dirname, '../bo/createAudio.js');
-        worker = new Worker(workerPath, { workerData: as });
+        worker = new Worker(workerPath, { workerData: {as,projectId}});
 
         worker.on('message', (message) => {
              console.log("tello "+ message);
@@ -76,11 +77,13 @@ AudioRouter.get('/update/:projectId', async (req,res) => {
     let worker;
     try{
         const projectId = req.params.projectId;
-        const as = await retriveAnimationScriptData("1");
-        const changesList = await getScriptChanges("1");
-        const audioData = await getAudioFile("1");
-        const workerPath = join(__dirname, '../bo/updateAudio.js');
-        worker = new Worker(workerPath, { workerData: {as, audioData, changesList}});
+        const as = await retriveAnimationScriptData(projectId);
+        const changesList = await getScriptChanges(projectId);
+        const audioData = await getAudioFile(projectId);
+        //const workerPath = join(__dirname, '../bo/updateAudio.js');
+        //worker = new Worker(workerPath, { workerData: {as, audioData, changesList,projectId}});
+        const workerPath = join(__dirname, '../bo/createAudio.js');
+        worker = new Worker(workerPath, { workerData: {as,projectId}});
 
         worker.on('message', (message) => {
              console.log("tello "+ message);
@@ -128,7 +131,7 @@ AudioRouter.get('/:projectId', async(req,res) => {
         const response = await retriveAudioFile(projectId);
         if(response.status == 1)
         {
-            console.log("Audio Fetched Successfully");
+            console.log("Audio Fetched Succeessfully");
             res.status(200).send(response);
         }
         else{

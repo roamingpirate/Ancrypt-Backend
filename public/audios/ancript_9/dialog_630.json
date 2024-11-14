@@ -1,0 +1,18 @@
+{
+  "metadata": {
+    "soundFile": "D:\\MyInterestingProject\\Ancrypt-Backend\\public\\audios\\ancript_9\\dialog_630.wav",
+    "duration": 1.80
+  },
+  "mouthCues": [
+    { "start": 0.00, "end": 0.11, "value": "B" },
+    { "start": 0.11, "end": 0.18, "value": "E" },
+    { "start": 0.18, "end": 0.46, "value": "B" },
+    { "start": 0.46, "end": 0.60, "value": "C" },
+    { "start": 0.60, "end": 1.09, "value": "B" },
+    { "start": 1.09, "end": 1.16, "value": "G" },
+    { "start": 1.16, "end": 1.23, "value": "E" },
+    { "start": 1.23, "end": 1.44, "value": "F" },
+    { "start": 1.44, "end": 1.79, "value": "B" },
+    { "start": 1.79, "end": 1.80, "value": "X" }
+  ]
+}

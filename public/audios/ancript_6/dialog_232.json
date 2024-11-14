@@ -1,0 +1,20 @@
+{
+  "metadata": {
+    "soundFile": "D:\\MyInterestingProject\\Ancrypt-Backend\\public\\audios\\ancript_6\\dialog_232.wav",
+    "duration": 1.76
+  },
+  "mouthCues": [
+    { "start": 0.00, "end": 0.05, "value": "B" },
+    { "start": 0.05, "end": 0.09, "value": "A" },
+    { "start": 0.09, "end": 0.32, "value": "B" },
+    { "start": 0.32, "end": 0.40, "value": "A" },
+    { "start": 0.40, "end": 0.75, "value": "B" },
+    { "start": 0.75, "end": 0.82, "value": "G" },
+    { "start": 0.82, "end": 0.96, "value": "F" },
+    { "start": 0.96, "end": 1.17, "value": "B" },
+    { "start": 1.17, "end": 1.45, "value": "E" },
+    { "start": 1.45, "end": 1.53, "value": "A" },
+    { "start": 1.53, "end": 1.75, "value": "B" },
+    { "start": 1.75, "end": 1.76, "value": "X" }
+  ]
+}

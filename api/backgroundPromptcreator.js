@@ -20,7 +20,7 @@ dotenv.config();
   
   async function getGeneratedBackgroundImagePrompt(prompt) {
     const parts = [
-      {text: "your task is to create background image prompt from the input i provide it should provide a scenic sense of background and not focus on objects or people"},
+      {text: "your task is to create 3d style background image prompt from the input i provide it should provide a scenic sense of background and not focus on objects or people. write prompt such that it strictly dose not contain any human or character or any text only scene "},
       {text: "input: A lively kitchen scene with Bob and Pam chopping vegetables, stirring pots, and laughing as they cook the soup together."},
       {text: "output: A bustling kitchen full of life. A large, rustic wooden table overflows with colorful vegetables, herbs, and spices, bathed in warm sunlight streaming through a window. Colorful kitchen art adorns the walls, creating a cozy and inviting atmosphere. Focus on the details and energy of the space, capturing the warmth and vibrancy of a lively kitchen."},
       {text: "input: A vintage map spread out on a table, surrounded by travel magazines, snacks, and a cup of coffee."},

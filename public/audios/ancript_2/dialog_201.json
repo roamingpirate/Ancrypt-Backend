@@ -1,0 +1,39 @@
+{
+  "metadata": {
+    "soundFile": "D:\\MyInterestingProject\\Ancrypt-Backend\\public\\audios\\ancript_2\\dialog_201.wav",
+    "duration": 4.92
+  },
+  "mouthCues": [
+    { "start": 0.00, "end": 0.30, "value": "X" },
+    { "start": 0.30, "end": 0.53, "value": "B" },
+    { "start": 0.53, "end": 0.63, "value": "A" },
+    { "start": 0.63, "end": 0.84, "value": "E" },
+    { "start": 0.84, "end": 0.91, "value": "B" },
+    { "start": 0.91, "end": 0.99, "value": "A" },
+    { "start": 0.99, "end": 1.16, "value": "C" },
+    { "start": 1.16, "end": 1.23, "value": "B" },
+    { "start": 1.23, "end": 1.30, "value": "C" },
+    { "start": 1.30, "end": 1.65, "value": "B" },
+    { "start": 1.65, "end": 1.73, "value": "A" },
+    { "start": 1.73, "end": 1.84, "value": "B" },
+    { "start": 1.84, "end": 2.12, "value": "F" },
+    { "start": 2.12, "end": 2.19, "value": "E" },
+    { "start": 2.19, "end": 2.33, "value": "B" },
+    { "start": 2.33, "end": 2.43, "value": "A" },
+    { "start": 2.43, "end": 2.52, "value": "C" },
+    { "start": 2.52, "end": 2.66, "value": "B" },
+    { "start": 2.66, "end": 2.74, "value": "A" },
+    { "start": 2.74, "end": 3.05, "value": "B" },
+    { "start": 3.05, "end": 3.26, "value": "C" },
+    { "start": 3.26, "end": 3.47, "value": "B" },
+    { "start": 3.47, "end": 3.55, "value": "A" },
+    { "start": 3.55, "end": 3.61, "value": "C" },
+    { "start": 3.61, "end": 3.95, "value": "B" },
+    { "start": 3.95, "end": 4.02, "value": "G" },
+    { "start": 4.02, "end": 4.16, "value": "B" },
+    { "start": 4.16, "end": 4.37, "value": "C" },
+    { "start": 4.37, "end": 4.51, "value": "A" },
+    { "start": 4.51, "end": 4.71, "value": "H" },
+    { "start": 4.71, "end": 4.92, "value": "X" }
+  ]
+}

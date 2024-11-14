@@ -1,0 +1,17 @@
+{
+  "metadata": {
+    "soundFile": "D:\\MyInterestingProject\\Ancrypt-Backend\\public\\audios\\ancript_10\\dialog_412.wav",
+    "duration": 1.84
+  },
+  "mouthCues": [
+    { "start": 0.00, "end": 0.35, "value": "F" },
+    { "start": 0.35, "end": 0.43, "value": "A" },
+    { "start": 0.43, "end": 0.77, "value": "B" },
+    { "start": 0.77, "end": 0.85, "value": "A" },
+    { "start": 0.85, "end": 1.04, "value": "F" },
+    { "start": 1.04, "end": 1.19, "value": "A" },
+    { "start": 1.19, "end": 1.69, "value": "B" },
+    { "start": 1.69, "end": 1.83, "value": "E" },
+    { "start": 1.83, "end": 1.84, "value": "X" }
+  ]
+}

@@ -22,7 +22,7 @@ const getGeneratedImage = async (prompt) => {
     return;
   }
 
-  const modifedPrompt = "Create an anime-style background image. "+prompt;
+  const modifedPrompt = "Create an semi-realistic 3d scene background image. "+prompt;
 
   const location = 'us-central1'; 
   const projectId = 'ankrypt';
@@ -53,7 +53,7 @@ const getGeneratedImage = async (prompt) => {
     const base64EncodedImage = predictions.bytesBase64Encoded;
     return base64EncodedImage;
   } catch (error) {
-    console.error('Error making prediction request:', error);
+    console.error('Error making prediction requeest:', error);
     throw error;
   }
 };
