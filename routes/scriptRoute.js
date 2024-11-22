@@ -32,10 +32,11 @@ ScriptRouter.post('/:projectId', async (req,res) => {
         const backgroundPrompts = scriptData.scenes.map(scene => scene.backgroundImagePrompt);
         console.log(backgroundPrompts);
         await uploadBackgroundImagePrompts(projectId, { bp : backgroundPrompts});
-        res.json(scriptData);   
+         
         uploadScriptData(projectId,scriptData);
         const animationScript = await createAnimationScript(scriptData);
         uploadAnimationScriptData(projectId,animationScript);
+        res.json(scriptData);  
     }
     catch(err)
     {
@@ -49,9 +50,9 @@ ScriptRouter.post('/update/:projectId', async(req,res) => {
     console.log("tello");
     try{
         uploadScriptData(projectId,updatedScript);
-        res.send("success"); 
         const animationScript = await createAnimationScript(updatedScript);
         uploadAnimationScriptData(projectId,animationScript);  
+        res.send("success"); 
     }
     catch(err){
         console.log(err);

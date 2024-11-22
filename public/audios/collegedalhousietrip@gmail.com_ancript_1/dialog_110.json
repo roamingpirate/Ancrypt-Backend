@@ -1,0 +1,20 @@
+{
+  "metadata": {
+    "soundFile": "D:\\MyInterestingProject\\Ancrypt-Backend\\public\\audios\\collegedalhousietrip@gmail.com_ancript_1\\dialog_110.wav",
+    "duration": 1.72
+  },
+  "mouthCues": [
+    { "start": 0.00, "end": 0.04, "value": "B" },
+    { "start": 0.04, "end": 0.22, "value": "E" },
+    { "start": 0.22, "end": 0.29, "value": "B" },
+    { "start": 0.29, "end": 0.37, "value": "A" },
+    { "start": 0.37, "end": 0.48, "value": "C" },
+    { "start": 0.48, "end": 0.90, "value": "B" },
+    { "start": 0.90, "end": 0.97, "value": "E" },
+    { "start": 0.97, "end": 1.32, "value": "C" },
+    { "start": 1.32, "end": 1.45, "value": "A" },
+    { "start": 1.45, "end": 1.51, "value": "C" },
+    { "start": 1.51, "end": 1.71, "value": "B" },
+    { "start": 1.71, "end": 1.72, "value": "X" }
+  ]
+}

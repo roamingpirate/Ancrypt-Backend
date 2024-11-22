@@ -16,7 +16,6 @@ export const updateScriptChanges = async (projectId, scriptChanges) => {
         TableName : 'ankryptProjects',
         Key: {
             'projectId': {S : projectId},
-            'userId': {S : '1'},
         },
         UpdateExpression: 'SET scriptChanges = :scriptChange',
         ExpressionAttributeValues: {
@@ -41,7 +40,6 @@ export const getScriptChanges = async (projectId) => {
         TableName : 'ankryptProjects',
         Key: {
             'projectId': {S : projectId},
-            'userId': {S : '1'},
         }
     }
     try {
@@ -49,7 +47,7 @@ export const getScriptChanges = async (projectId) => {
         const data = await ddb.send(command);
         if (data.Item) {
             console.log('Fetch succeeded:', data.Item);
-            const changesList = data.Item.scriptChanges.L; 
+            const changesList = data.Item?.scriptChanges?.L || []; 
             const formattedChangesList = changesList.map((item) => item.S);
             console.log(formattedChangesList);
             return formattedChangesList;
@@ -69,7 +67,6 @@ export const updateBackgroundImageStatus = async (projectId, status) => {
         TableName : 'ankryptProjects',
         Key: {
             'projectId': {S : projectId.toString()},
-            'userId': {S : '1'},
         },
         UpdateExpression: 'SET backgroundStatus = :bs',
         ExpressionAttributeValues: {
@@ -94,7 +91,6 @@ export const getBackgroundImageStatus = async (projectId) => {
         TableName : 'ankryptProjects',
         Key: {
             'projectId': {S : projectId.toString()},
-            'userId': {S : '1'},
         }
     }
     try {
@@ -164,12 +160,14 @@ export const addProjectToUser = async (userId, projectName) => {
       const data = await ddb.send(getItemCommand);
       const projectList = data.Item?.projectList?.L || [];
       const newIndex = projectList.length;
-      const projectId = `ancript_${newIndex + 1}`;
+      const projectNo = `ancript_${newIndex + 1}`;
+      const projectId = userId+"_"+projectNo;
   
       const project = {
         M: {
           projectName: { S: projectName },
-          projectId: { S: projectId },
+          projectId: { S: projectId.toString() },
+          projectNo: { S: projectNo }
         }
       };
   
@@ -189,7 +187,7 @@ export const addProjectToUser = async (userId, projectName) => {
   
       const updateResult = await ddb.send(updateCommand);
       console.log("Project added to user:", updateResult);
-      return projectId;
+      return projectNo;
     } catch (err) {
       console.error("Failed to add project to user:", err);
       throw err;
@@ -213,6 +211,7 @@ export const getProjectList = async (userId) => {
       const simplifiedProjectList = projectList.map(item => ({
         projectName: item.M.projectName.S,
         projectId: item.M.projectId.S,
+        projectNo: item.M.projectNo?.S ? item.M.projectNo.S : undefined
       }));
   
       return simplifiedProjectList;
@@ -274,7 +273,6 @@ export const getProjectList = async (userId) => {
             TableName: "ankryptProjects",
             Key: {
                 projectId: { S: projectId.toString() },
-                userId: { S: userId.toString() },
             },
         });
 
@@ -300,17 +298,20 @@ export const getProjectList = async (userId) => {
 };
 
 
-export const fetchProjectDetails = async (userId, projectId) => {
+export const fetchProjectDetails = async (userId, projectNo) => {
+  console.log('Fetching project details');
     try {
+      const projectId = `${userId}_${projectNo}`;
+      console.log(projectId);
         const command = new GetItemCommand({
             TableName: "ankryptProjects",
             Key: {
-                userId: { S: userId.toString() },
-                projectId: { S: projectId.toString() }
+                projectId: { S: projectId }
             }
         });
 
         const data = await ddb.send(command);
+        console.log(data);
 
         if (!data.Item) {
             return { status: 0, message: 'table not present' };

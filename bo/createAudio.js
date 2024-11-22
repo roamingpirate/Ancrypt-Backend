@@ -116,7 +116,7 @@ const lipSyncMessage = async (pid,i, j,k) => {
                          dialog = "a"
                      }
 
-                     parentPort.postMessage(`${dialog} dialog`)
+                     parentPort.postMessage(`Creating Audio : ${dialog}`)
                     console.log("Current DIalog: " + dialog);
                     const fileName = `./public/audios/${projectId}/dialog_${k}${i}${j}.wav`;
 
@@ -152,7 +152,7 @@ const lipSyncMessage = async (pid,i, j,k) => {
                       ),
                     };
                     count= count +1;
-                    parentPort.postMessage(`${count} audio files created!`)
+                    parentPort.postMessage(`Creating Background Images`)
                     SpeechAudioData.push(currentAudioData);
                   }
               SceneaudioData.push(SpeechAudioData);

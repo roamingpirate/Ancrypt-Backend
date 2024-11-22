@@ -103,22 +103,27 @@ export const uploadSpeakerData = async (projectId,speakerData) => {
 export const retriveSpeakerData = async (projectId) => {
     const speakerDataKey = `${projectId}/speaker.json`;
 
-    try{
+    try {
         const command = new GetObjectCommand({
             Bucket: bucketName,
             Key: speakerDataKey,
-          });
+        });
 
-          const dataStream = await s3.send(command);
-          const data = await streamToString(dataStream.Body);
-          
-          return JSON.parse(data);
-      
+        const dataStream = await s3.send(command);
+        const data = await streamToString(dataStream.Body);
+
+        return JSON.parse(data);
+    } catch (err) {
+        if (err.name === 'NoSuchKey') {
+            console.log(`Speakerr data not found for project: ${projectId}`);
+            return [];
+        }
+
+        console.error("Error: " + err.message);
+        throw err;
     }
-    catch(err){
-        console.log("error"+err.message);
-    }
-}
+};
+
 
 export const uploadAnimationScriptData = async (projectId,animationScriptData) => {
     const scriptDataKey = `${projectId}/animationScript.json`;

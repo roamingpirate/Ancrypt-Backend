@@ -1,0 +1,35 @@
+{
+  "metadata": {
+    "soundFile": "D:\\MyInterestingProject\\Ancrypt-Backend\\public\\audios\\collegedalhousietrip@gmail.com_ancript_1\\dialog_322.wav",
+    "duration": 3.00
+  },
+  "mouthCues": [
+    { "start": 0.00, "end": 0.03, "value": "B" },
+    { "start": 0.03, "end": 0.12, "value": "A" },
+    { "start": 0.12, "end": 0.22, "value": "C" },
+    { "start": 0.22, "end": 0.36, "value": "B" },
+    { "start": 0.36, "end": 0.43, "value": "G" },
+    { "start": 0.43, "end": 0.50, "value": "F" },
+    { "start": 0.50, "end": 0.59, "value": "A" },
+    { "start": 0.59, "end": 0.68, "value": "E" },
+    { "start": 0.68, "end": 0.76, "value": "A" },
+    { "start": 0.76, "end": 0.94, "value": "C" },
+    { "start": 0.94, "end": 1.01, "value": "B" },
+    { "start": 1.01, "end": 1.08, "value": "D" },
+    { "start": 1.08, "end": 1.22, "value": "B" },
+    { "start": 1.22, "end": 1.36, "value": "D" },
+    { "start": 1.36, "end": 1.43, "value": "C" },
+    { "start": 1.43, "end": 1.50, "value": "G" },
+    { "start": 1.50, "end": 1.57, "value": "C" },
+    { "start": 1.57, "end": 1.68, "value": "A" },
+    { "start": 1.68, "end": 1.81, "value": "B" },
+    { "start": 1.81, "end": 1.89, "value": "A" },
+    { "start": 1.89, "end": 2.17, "value": "C" },
+    { "start": 2.17, "end": 2.24, "value": "B" },
+    { "start": 2.24, "end": 2.31, "value": "C" },
+    { "start": 2.31, "end": 2.52, "value": "B" },
+    { "start": 2.52, "end": 2.60, "value": "A" },
+    { "start": 2.60, "end": 2.99, "value": "B" },
+    { "start": 2.99, "end": 3.00, "value": "X" }
+  ]
+}
