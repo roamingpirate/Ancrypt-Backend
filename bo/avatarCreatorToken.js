@@ -2,7 +2,7 @@ import axios from 'axios'
 
 const AvatarCreatorToken = async () => {
     try {
-      const response = await axios.post('https://ancript.readyplayer.me/api/users', {});
+      const response = await axios.post('https://ankrypt.readyplayer.me/api/users', {});
       
       // Extracting the token from the response data
       const token = response.data?.data?.token;
@@ -24,7 +24,7 @@ const draftAvatar = async (token, id) => {
             },
             data: {
               data: {
-                partner: 'ancript',
+                partner: 'ankrypt',
                 bodyType: 'fullbody'
               }
             }
