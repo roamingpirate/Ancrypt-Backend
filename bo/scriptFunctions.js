@@ -20,3 +20,4 @@ export const createAnimationScript = async (scriptData) => {
     //let res= JSON.parse(animationScript);
     return animationScript;
 }
+

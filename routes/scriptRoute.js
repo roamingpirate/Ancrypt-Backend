@@ -26,7 +26,12 @@ ScriptRouter.post('/:projectId', async (req,res) => {
         let scriptData = await generateScript(prompt);
         console.log("gene script", scriptData)
         scriptData = JSON.parse(scriptData);
+        // old method delete audio file 
         await deleteAudioFile(projectId);
+
+        // adding isChanged key to track changes in script so that audio can be created new script isChanged true for all
+        // taking isChanged if undefined then take it as true no need to add 
+
         updateBackgroundImageStatus(projectId,0);
         // extracting BGI prompts 
         const backgroundPrompts = scriptData.scenes.map(scene => scene.backgroundImagePrompt);

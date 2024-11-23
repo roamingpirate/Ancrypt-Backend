@@ -264,6 +264,90 @@ export const deleteAudioFile = async (projectId) => {
     }
 };
 
+export const uploadAudioPart = async (projectId,audioPartName,audioPartData) => {
+    const audioDataKey = `${projectId}/audio/${audioPartName}.json`;
+
+    try{
+        const params = {
+            Bucket: bucketName,
+            Key: audioDataKey,
+            Body: JSON.stringify(audioPartData),
+            ContentType: 'application/json'
+        }
+
+        const data = await s3.send(new PutObjectCommand(params));
+        console.log("Audio Part Uploaded Successfully");
+    }
+    catch(err)
+    {
+        console.log("Error in uploading Audio Part");
+        console.log(err.message);
+        throw err;
+    }   
+}
+
+export const getAudioPart = async (projectId,audioPartName) => {
+    const audioDataKey = `${projectId}/audio/${audioPartName}.json`;
+
+    try{
+        const command = new GetObjectCommand({
+            Bucket: bucketName,
+            Key: audioDataKey,
+          });
+
+          const dataStream = await s3.send(command);
+          const data = await streamToString(dataStream.Body);
+          
+          return JSON.parse(data);
+    }
+    catch(err)
+    {
+        console.log("File Dont Exist");
+        console.log(err.message);
+        return { data : "File dont exist", status : 0};
+    }   
+}
+
+export const deleteAudioPart = async (projectId, audioPartName) => {
+    const audioDataKey = `${projectId}/audio/${audioPartName}.json`;
+
+    try {
+        const command = new DeleteObjectCommand({
+            Bucket: bucketName,
+            Key: audioDataKey,
+        });
+
+        await s3.send(command); // Send the delete command
+        console.log(`Successfully deleted audio part ${audioDataKey}`);
+        return { message: "File deleted successfully", status: 1 };
+    } catch (err) {
+        console.log("Error deleting file");
+        console.log(err.message);
+        return { message: "File doesn't exist or could not be deleted", status: 0 };
+    }
+};
+
+export const updateScriptAudioPart = async (projectId, sceneIndex, scriptIndex, audioPartData) => {
+    const script = await retriveScriptData(projectId);
+    const scriptScene = script["scenes"][sceneIndex];
+    const scriptSceneScript = scriptScene["script"][scriptIndex];
+
+    if(scriptSceneScript["audioPart"] != undefined)
+    {
+        // delete that audio part
+        await deleteAudioPart(projectId, scriptSceneScript["audioPart"])
+    }
+    const timestamp = Date.now();
+   // const audioPartName = projectId+"_"+"audio_"+timestamp;
+    const audioPartName = `${projectId}_audio_${timestamp}_${Math.random().toString(36).substring(2, 7)}`;
+    console.log(`${audioPartName}`);
+    await uploadAudioPart(projectId,audioPartName, audioPartData);
+    scriptSceneScript["audioPart"] = audioPartName;
+    scriptSceneScript["isChanged"] = false;
+    script["scenes"][sceneIndex]["script"][scriptIndex]= scriptSceneScript;
+    await uploadScriptData(projectId,script);
+}
+
 export const uploadImageFile = async (projectId,base64Image,ImageNo) => {
 
     const imageDataKey = `${projectId}/back${ImageNo}.png`;

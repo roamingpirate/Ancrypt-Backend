@@ -1,10 +1,11 @@
 import express from 'express';
-import {getAudioFile, retriveAnimationScriptData, retriveAudioFile} from '../database/s3.js'; 
+import {getAudioFile, getAudioPart, retriveAnimationScriptData, retriveAudioFile, retriveScriptData, updateScriptAudioPart} from '../database/s3.js'; 
 //import { createAudio } from '../bo/createAudio.js';
 import { Worker } from 'worker_threads';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { getScriptChanges, updateScriptChanges } from '../database/ddb.js';
+import { createAudioForSpeech } from '../bo/createAudioForSpeech.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -59,6 +60,49 @@ AudioRouter.get('/create/:projectId', async (req,res) => {
         worker.terminate();
         res.status(400).send({ message: "Error", status : 0});
     }
+})
+
+
+AudioRouter.get('/createPart/:projectId/:sceneIndex/:scriptIndex', async (req,res) => {
+    const projectId = req.params.projectId;
+    const sceneIndex = req.params.sceneIndex;
+    const scriptIndex = req.params.scriptIndex;
+    const as = await retriveAnimationScriptData(projectId);
+    const result = await createAudioForSpeech(projectId,as,sceneIndex,scriptIndex);
+
+    await updateScriptAudioPart(projectId,sceneIndex,scriptIndex,result)
+    res.send(result);
+})
+
+AudioRouter.get('/createAudioFile/:projectId', async (req,res) => {
+    const projectId = req.params.projectId;
+    let script = await retriveScriptData(projectId);
+    script = script.scenes;
+
+    const audioFile = [];
+    for(let i =0;i< script.length;i++) {
+        const sceneAudioFile = [];
+        const sceneScript = script[i].script;
+        
+        for(let j=0;j<sceneScript.length;j++)
+        {
+            const speechObj = sceneScript[j];
+            if(speechObj["audioPart"] == undefined)
+            {
+                sceneAudioFile.push([{audio: "", lipsync: ""}]);
+            }
+            else{
+                const audioPartD = await getAudioPart(projectId, speechObj["audioPart"]);
+                sceneAudioFile.push(audioPartD);
+            }
+
+            console.log(i+" "+j);
+        
+        }
+        audioFile.push(sceneAudioFile);
+    }
+
+    res.send(audioFile);
 })
 
 AudioRouter.get('/update/:projectId', async (req,res) => {
