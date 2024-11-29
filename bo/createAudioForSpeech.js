@@ -1,4 +1,5 @@
 import { exec } from "child_process";
+import os from 'os';
 import ffmpeg from 'fluent-ffmpeg';
 import ffmpegPath from 'ffmpeg-static';
 import { promises as fs , createWriteStream} from "fs";
@@ -77,18 +78,34 @@ const lipSyncMessage = async (pid,i, j,k) => {
     const outputFilePath = `./public/audios/${pid}/dialog_${k}${i}${j}.wav`
    // await convertAudioFile(inputFilePath,outputFilePath);
     console.log(`Conversion done in ${new Date().getTime() - time}ms`);
-    await execCommand(
-      `bin\\rhubarb.exe -f json -o .\\public\\audios\\${pid}\\dialog_${k}${i}${j}.json .\\public\\audios\\${pid}\\dialog_${k}${i}${j}.wav -r phonetic`
-    );
-    console.log(`Lip sync done in ${new Date().getTime() - time}ms`);
+
+    const platform = os.platform();
+    let command;
+
+    if (platform === 'win32') {
+      // Windows: Use bin\\rhubarb.exe
+      command = `bin_w\\rhubarb.exe -f json -o .\\public\\audios\\${pid}\\dialog_${k}${i}${j}.json .\\public\\audios\\${pid}\\dialog_${k}${i}${j}.wav -r phonetic`
+    } else if (platform === 'linux') {
+      // Linux: Use bin/rhubarb
+      command = `bin\\rhubarb.exe -f json -o .\\public\\audios\\${pid}\\dialog_${k}${i}${j}.json .\\public\\audios\\${pid}\\dialog_${k}${i}${j}.wav -r phonetic`
+    } else {
+      console.log('Unsupported platform:', platform);
+      return;
+    }
+
+    try {
+      await execCommand(command);
+      console.log(`Lip sync done in ${new Date().getTime() - time}ms`);
+    } catch (error) {
+      console.error(`Error during lip sync: ${error}`);
+    }
+
   };
 
   const isFemaleSpeaker = (speakerName, speakersList) => {
     const speaker = speakersList.find(s => s.avatarName.toLowerCase() === speakerName.toLowerCase());
     return speaker ? speaker.vgender === "female" : true;
   };
-  
-  
 
 
   export const createAudioForSpeech = async (projectId, animationScript, k, i) => {
