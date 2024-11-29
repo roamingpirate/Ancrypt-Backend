@@ -26,14 +26,14 @@ import UserRouter from './routes/userRoute.js';
 import { GetavatarCreatorToken } from './bo/avatarCreatorToken.js';
 import VideoRouter from './routes/videoRoute.js';
 
-const corsOptions = {
-  origin: ['https://ancript.com', 'http://localhost:3000'], // Allowed origins
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true, // Include cookies if required
-};
+// const corsOptions = {
+//   origin: ['https://ancript.com', 'http://localhost:3000'], // Allowed origins
+//   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+//   credentials: true, // Include cookies if required
+// };
 
 const app = express();
-app.use(cors(corsOptions));
+app.use(cors());
 app.use('/script',ScriptRouter);
 app.use('/animationScript',AnimationScriptRouter);
 app.use('/audio',AudioRouter);
