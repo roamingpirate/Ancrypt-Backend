@@ -37,8 +37,9 @@ app.use('/speaker',SpeakerRouter);
 app.use('/user',UserRouter)
 app.use('/video',VideoRouter)
 
-app.get('/', (req,res) => {
+app.get('/hello', (req,res) => {
     console.log("pell");
+    res.send("hello")
 })
 
 app.get('/project/:userId/:projectId', async (req, res) => {
