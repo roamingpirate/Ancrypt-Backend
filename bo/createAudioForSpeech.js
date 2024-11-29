@@ -2,6 +2,7 @@ import { exec } from "child_process";
 import ffmpeg from 'fluent-ffmpeg';
 import ffmpegPath from 'ffmpeg-static';
 import { promises as fs , createWriteStream} from "fs";
+import path from 'path'; 
 import { parentPort, workerData } from "worker_threads";
 import { retriveScriptData, retriveSpeakerData, uploadAudioFile } from '../database/s3.js';
 import dotenv from 'dotenv';
@@ -90,8 +91,7 @@ const lipSyncMessage = async (pid,i, j,k) => {
   
 
 
-  export const createAudioForSpeech = async (projectId,animationScript, k, i) => {
-
+  export const createAudioForSpeech = async (projectId, animationScript, k, i) => {
     let speakerList = await retriveSpeakerData(projectId);
     speakerList = speakerList.speakerList;
     const speechArr = animationScript[k].Script;
@@ -102,53 +102,57 @@ const lipSyncMessage = async (pid,i, j,k) => {
     for (let j = 0; j < dialogArr.length; j++) {
         let dialog = dialogArr[j].Text;
 
-        if(dialog.trim() == "")
-        {
-            dialog = "a"
+        if(dialog.trim() == "") {
+            dialog = "a"; // Default to 'a' if the dialog is empty
         }
 
-     //  parentPort.postMessage(`Creating Audio : ${dialog}`)
-       console.log("Current DIalog: " + dialog);
-       const fileName = `./public/audios/${projectId}/dialog_${k}${i}${j}.wav`;
+        console.log("Current Dialog: " + dialog);
+        const fileName = `./public/audios/${projectId}/dialog_${k}${i}${j}.wav`;
+        const jsonFileName = `./public/audios/${projectId}/dialog_${k}${i}${j}.json`;
 
-       
-           const directoryPath = `./public/audios/${projectId}/`;
-           try {
-             await fs.mkdir(directoryPath, { recursive: true });
-           } catch (err) {
-               console.error(`Error creating directory: ${err}`);
-           }
+        const directoryPath = `./public/audios/${projectId}/`;
 
-       const request = {
-         input: {text: dialog},
-         voice: {languageCode: 'en-US', "name": isFemale? "en-US-Journey-F": "en-US-Journey-D"},
-         audioConfig: {audioEncoding: 'LINEAR16'},
-       };
+        // Ensure the directory exists
+        try {
+            await fs.mkdir(directoryPath, { recursive: true });
+        } catch (err) {
+            console.error(`Error creating directory: ${err}`);
+        }
 
-       const [response] = await textToSpeechClient.synthesizeSpeech(request);
-       //console.log(response.audioContent);
-     //  const writeFile = util.promisify(fs.writeFile);
-       await fs.writeFile(fileName, response.audioContent);
-       console.log('File written successfully!');
-      // await delay(10000);
-       
-       await lipSyncMessage(projectId,i, j,k);
+        const request = {
+            input: { text: dialog },
+            voice: { languageCode: 'en-US', "name": isFemale ? "en-US-Journey-F" : "en-US-Journey-D" },
+            audioConfig: { audioEncoding: 'LINEAR16' },
+        };
 
-     //  // await delay(2000);
+        const [response] = await textToSpeechClient.synthesizeSpeech(request);
+        await fs.writeFile(fileName, response.audioContent); // Save the audio file
+        console.log('File written successfully!');
 
-       const currentAudioData = {
-         audio: await audioFileToBase64(fileName),
-         lipsync: await readJsonTranscript(
-           `./public/audios/${projectId}/dialog_${k}${i}${j}.json`
-         ),
-       };
-     //  count= count +1;
-      // parentPort.postMessage(`Creating Background Images`)
-       SpeechAudioData.push(currentAudioData);
-     }
+        await lipSyncMessage(projectId, i, j, k);
 
-     return SpeechAudioData;
-  };
+        const currentAudioData = {
+            audio: await audioFileToBase64(fileName),
+            lipsync: await readJsonTranscript(jsonFileName), // Read lipsync JSON
+        };
 
+        // Delete the audio file and JSON file after processing
+        try {
+            await fs.unlink(fileName); // Delete the audio file
+            console.log(`Deleted audio file: ${fileName}`);
+
+            await fs.unlink(jsonFileName); // Delete the JSON file
+            console.log(`Deleted lipsync JSON file: ${jsonFileName}`);
+        } catch (err) {
+            console.error(`Error deleting files: ${err}`);
+        }
+
+        SpeechAudioData.push(currentAudioData); // Add data to array for further processing
+    }
+
+    await fs.rmdir(`./public/audios/${projectId}`);
+
+    return SpeechAudioData;
+};
 
   //createAudio(workerData.projectId, workerData.as);
