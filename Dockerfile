@@ -10,10 +10,10 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
-RUN chmod +x /usr/src/app/bin/rhubarb
-
 # Copy the rest of the application files
 COPY . .
+
+RUN chmod +x /usr/src/app/bin/rhubarb
 
 # Expose the port the app will run on
 EXPOSE 8080
