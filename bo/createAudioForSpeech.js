@@ -87,7 +87,8 @@ const lipSyncMessage = async (pid,i, j,k) => {
       command = `bin_w\\rhubarb.exe -f json -o .\\public\\audios\\${pid}\\dialog_${k}${i}${j}.json .\\public\\audios\\${pid}\\dialog_${k}${i}${j}.wav -r phonetic`
     } else if (platform === 'linux') {
       // Linux: Use bin/rhubarb
-      command = `bin\\rhubarb.exe -f json -o .\\public\\audios\\${pid}\\dialog_${k}${i}${j}.json .\\public\\audios\\${pid}\\dialog_${k}${i}${j}.wav -r phonetic`
+      //command = `bin\\rhubarb.exe -f json -o .\\public\\audios\\${pid}\\dialog_${k}${i}${j}.json .\\public\\audios\\${pid}\\dialog_${k}${i}${j}.wav -r phonetic`
+       command = `bin/rhubarb -f json -o ./public/audios/${pid}/dialog_${k}${i}${j}.json ./public/audios/${pid}/dialog_${k}${i}${j}.wav -r phonetic`
     } else {
       console.log('Unsupported platform:', platform);
       return;
