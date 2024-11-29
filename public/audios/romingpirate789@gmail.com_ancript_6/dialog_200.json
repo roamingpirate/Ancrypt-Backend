@@ -1,0 +1,17 @@
+{
+  "metadata": {
+    "soundFile": "D:\\MyInterestingProject\\Ancrypt-Backend\\public\\audios\\romingpirate789@gmail.com_ancript_6\\dialog_200.wav",
+    "duration": 1.28
+  },
+  "mouthCues": [
+    { "start": 0.00, "end": 0.04, "value": "B" },
+    { "start": 0.04, "end": 0.22, "value": "C" },
+    { "start": 0.22, "end": 0.36, "value": "B" },
+    { "start": 0.36, "end": 0.50, "value": "E" },
+    { "start": 0.50, "end": 0.57, "value": "B" },
+    { "start": 0.57, "end": 0.78, "value": "F" },
+    { "start": 0.78, "end": 0.85, "value": "G" },
+    { "start": 0.85, "end": 1.27, "value": "B" },
+    { "start": 1.27, "end": 1.28, "value": "X" }
+  ]
+}

@@ -24,6 +24,7 @@ const elevenlabs = new ElevenLabsClient({
 
 import UserRouter from './routes/userRoute.js';
 import { GetavatarCreatorToken } from './bo/avatarCreatorToken.js';
+import VideoRouter from './routes/videoRoute.js';
 
 
 const app = express();
@@ -34,6 +35,7 @@ app.use('/audio',AudioRouter);
 app.use('/background',BackgroundRouter);
 app.use('/speaker',SpeakerRouter);
 app.use('/user',UserRouter)
+app.use('/video',VideoRouter)
 
 app.get('/', (req,res) => {
     console.log("pell");
@@ -77,7 +79,7 @@ const createAudio = async () => {
 
 
 
-app.listen(3000, async () => {
+app.listen(8080, async () => {
   //createAudio();
   if(1){
    // getImageUrl(1,1);

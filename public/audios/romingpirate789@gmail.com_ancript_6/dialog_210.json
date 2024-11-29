@@ -1,0 +1,38 @@
+{
+  "metadata": {
+    "soundFile": "D:\\MyInterestingProject\\Ancrypt-Backend\\public\\audios\\romingpirate789@gmail.com_ancript_6\\dialog_210.wav",
+    "duration": 5.80
+  },
+  "mouthCues": [
+    { "start": 0.00, "end": 0.13, "value": "B" },
+    { "start": 0.13, "end": 0.20, "value": "G" },
+    { "start": 0.20, "end": 0.34, "value": "C" },
+    { "start": 0.34, "end": 0.62, "value": "B" },
+    { "start": 0.62, "end": 0.69, "value": "F" },
+    { "start": 0.69, "end": 0.90, "value": "B" },
+    { "start": 0.90, "end": 1.04, "value": "C" },
+    { "start": 1.04, "end": 1.15, "value": "A" },
+    { "start": 1.15, "end": 1.68, "value": "B" },
+    { "start": 1.68, "end": 1.82, "value": "C" },
+    { "start": 1.82, "end": 2.22, "value": "B" },
+    { "start": 2.22, "end": 2.30, "value": "A" },
+    { "start": 2.30, "end": 2.49, "value": "F" },
+    { "start": 2.49, "end": 2.63, "value": "G" },
+    { "start": 2.63, "end": 2.70, "value": "F" },
+    { "start": 2.70, "end": 2.91, "value": "C" },
+    { "start": 2.91, "end": 3.25, "value": "B" },
+    { "start": 3.25, "end": 3.73, "value": "F" },
+    { "start": 3.73, "end": 3.83, "value": "A" },
+    { "start": 3.83, "end": 4.45, "value": "B" },
+    { "start": 4.45, "end": 4.52, "value": "C" },
+    { "start": 4.52, "end": 4.66, "value": "B" },
+    { "start": 4.66, "end": 4.74, "value": "A" },
+    { "start": 4.74, "end": 4.83, "value": "D" },
+    { "start": 4.83, "end": 4.91, "value": "A" },
+    { "start": 4.91, "end": 4.98, "value": "B" },
+    { "start": 4.98, "end": 5.06, "value": "A" },
+    { "start": 5.06, "end": 5.30, "value": "F" },
+    { "start": 5.30, "end": 5.79, "value": "B" },
+    { "start": 5.79, "end": 5.80, "value": "X" }
+  ]
+}

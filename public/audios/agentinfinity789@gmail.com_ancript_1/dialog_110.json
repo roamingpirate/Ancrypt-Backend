@@ -1,0 +1,12 @@
+{
+  "metadata": {
+    "soundFile": "D:\\MyInterestingProject\\Ancrypt-Backend\\public\\audios\\agentinfinity789@gmail.com_ancript_1\\dialog_110.wav",
+    "duration": 0.68
+  },
+  "mouthCues": [
+    { "start": 0.00, "end": 0.06, "value": "B" },
+    { "start": 0.06, "end": 0.25, "value": "C" },
+    { "start": 0.25, "end": 0.67, "value": "B" },
+    { "start": 0.67, "end": 0.68, "value": "X" }
+  ]
+}

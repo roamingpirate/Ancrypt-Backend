@@ -440,6 +440,26 @@ export const getImageUrl = async (projectId, ImageNo) => {
 }
 
 
+export const uploadVideo = async (videoKey,videoData) =>{
+    const params = {
+        Bucket: 'ancript-videos',
+        Key: videoKey,
+        Body: videoData,
+        ContentType: 'video/mp4',
+        ACL: 'public-read', 
+    };
+
+    try {
+        const data = await s3.send(new PutObjectCommand(params));
+        console.log("Video uploaded successfully to S3");
+        return data;
+    } catch (err) {
+        console.error("Error uploading video to S3:", err.message);
+        throw err;
+    }
+}
+
+
 
 
 

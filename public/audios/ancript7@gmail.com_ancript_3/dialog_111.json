@@ -1,0 +1,18 @@
+{
+  "metadata": {
+    "soundFile": "D:\\MyInterestingProject\\Ancrypt-Backend\\public\\audios\\ancript7@gmail.com_ancript_3\\dialog_111.wav",
+    "duration": 1.44
+  },
+  "mouthCues": [
+    { "start": 0.00, "end": 0.14, "value": "F" },
+    { "start": 0.14, "end": 0.35, "value": "C" },
+    { "start": 0.35, "end": 0.63, "value": "E" },
+    { "start": 0.63, "end": 0.71, "value": "A" },
+    { "start": 0.71, "end": 0.76, "value": "E" },
+    { "start": 0.76, "end": 1.01, "value": "F" },
+    { "start": 1.01, "end": 1.08, "value": "B" },
+    { "start": 1.08, "end": 1.22, "value": "E" },
+    { "start": 1.22, "end": 1.43, "value": "F" },
+    { "start": 1.43, "end": 1.44, "value": "X" }
+  ]
+}

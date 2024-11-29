@@ -1,0 +1,12 @@
+{
+  "metadata": {
+    "soundFile": "D:\\MyInterestingProject\\Ancrypt-Backend\\public\\audios\\anshikag.cs.20@nitj.ac.in_ancript_1\\dialog_120.wav",
+    "duration": 0.64
+  },
+  "mouthCues": [
+    { "start": 0.00, "end": 0.37, "value": "B" },
+    { "start": 0.37, "end": 0.44, "value": "E" },
+    { "start": 0.44, "end": 0.58, "value": "F" },
+    { "start": 0.58, "end": 0.64, "value": "X" }
+  ]
+}

@@ -22,7 +22,7 @@ const getGeneratedImage = async (prompt) => {
     return;
   }
 
-  const modifedPrompt = "Create an semi-realistic 3d scene background image. "+prompt;
+  const modifedPrompt = "Create an semi-realistic 3d anime style scene background image. "+prompt;
 
   const location = 'us-central1'; 
   const projectId = 'ankrypt';

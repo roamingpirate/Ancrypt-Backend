@@ -146,6 +146,118 @@ export const addNewUser = async (userId) => {
     }
 };
 
+export const fetchIsNewStatus = async (userId) => {
+  try {
+      const getCommand = new GetItemCommand({
+          TableName: "userInfo",
+          Key: {
+              userId: { S: userId.toString() },
+          },
+      });
+
+      const result = await ddb.send(getCommand);
+
+      // If user is not found, return an error or a different response
+      if (!result.Item) {
+          console.log("User not found");
+          return { status: 0, message: "User not found" };
+      }
+
+      // Check if `isNew` is present and handle its value
+      if (result.Item.hasOwnProperty("isNew")) {
+          const isNewValue = result.Item.isNew.BOOL;
+          return { status: isNewValue ? 1 : 0 };
+      }
+
+      // If `isNew` is not present, treat as `status: 1`
+      return { status: 1 };
+  } catch (err) {
+      console.error("Error fetching isNew status:", err);
+      throw err;
+  }
+};
+
+export const setIsNewToFalse = async (userId) => {
+  try {
+      const updateCommand = new UpdateItemCommand({
+          TableName: "userInfo",
+          Key: {
+              userId: { S: userId.toString() },
+          },
+          UpdateExpression: "SET isNew = :falseValue",
+          ExpressionAttributeValues: {
+              ":falseValue": { BOOL: false },
+          },
+      });
+
+      await ddb.send(updateCommand);
+      console.log("isNew set to false successfully");
+      return "success";
+  } catch (err) {
+      console.error("Failed to set isNew to false:", err);
+      throw err;
+  }
+};
+
+export const isBetaApproved = async (userId) => {
+   try {
+      const getCommand = new GetItemCommand({
+          TableName: "betaApprovedUsers",
+          Key: {
+              userId: { S: userId.toString() },
+          },
+      });
+
+      const isBetaApprovedUser = await ddb.send(getCommand);
+
+      if (isBetaApprovedUser.Item) {
+          console.log("User Beta Approved");
+          return 1;
+      }
+
+      console.log("User Not Beta Approved");
+      return 0;
+
+    } catch (err) {
+        console.error('Failed to add user:', err);
+        throw err;
+    }
+}
+
+export const addUserRequest = async (userId, userName) => {
+        const item = {
+          userId: { S: userId.toString() },
+          name: { S: userName.toString() },
+      };
+
+      try {
+        const getCommand = new GetItemCommand({
+          TableName: "userRequest",
+          Key: {
+              userId: { S: userId.toString() },
+          },
+      });
+
+        const existingUser = await ddb.send(getCommand);
+
+        if (existingUser.Item) {
+            console.log("User request already exists");
+            return 0;
+        }
+
+        const putCommand = new PutItemCommand({
+            TableName: "userRequest",
+            Item: item,
+        });
+        await ddb.send(putCommand);
+        console.log("User  request added");
+        return 1;
+    } catch (err) {
+        console.error('Failed to add user:', err);
+        throw err;
+    }
+
+}
 
 export const addProjectToUser = async (userId, projectName) => {
     try {
