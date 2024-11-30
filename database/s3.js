@@ -418,25 +418,41 @@ export const getBackgroundImagePrompt = async (projectId) => {
 }
 
 
-export const getImageUrl = async (projectId, ImageNo) => {
+const fallbackImages = [
+    "https://ancript-videos.s3.us-east-1.amazonaws.com/Abstract+Botanical+Poster+en+Print%2C+Botanische+Wanddecoratie%2C+Groen+Interieur%2C+Modern+_+MDRN+HOME.jpg",
+    "https://ancript-videos.s3.us-east-1.amazonaws.com/Fondo+Papel+Pintado+Abstracto+Azul+Pastel+de+Pantalla+Imagen+para+Descarga+Gratuita+-+Pngtree.jpg",
+    "https://ancript-videos.s3.us-east-1.amazonaws.com/Green+Abstract+Geometric+Waves+Wallpaper+R9320+-+Roll.jpg",
+    "https://ancript-videos.s3.us-east-1.amazonaws.com/Hovia+-+Consciously+Designed+Wallpaper+%26+Murals.jpg",
+    "https://ancript-videos.s3.us-east-1.amazonaws.com/Large+Painting%2C+Blue+White+Oversize+Abstract+Wall+Art+Living+Room%2C+Extra+Large+Original+Aqua+Painting+Canvas+Abstract+Water+Spiral+Painting.jpg"
+  ];
+
+
+  export const getImageUrl = async (projectId, ImageNo) => {
     const imageDataKey = `${projectId}/back${ImageNo}.png`;
-    try{
+    try {
         const params = {
             Bucket: bucketName,
             Key: imageDataKey,
         }
 
+        // Attempt to get the object from S3
         const command = new GetObjectCommand(params);
+        await s3.send(command);
+
+        // If the object exists, generate the pre-signed URL
         const url = await getSignedUrl(s3, command, { expiresIn: 36000 });
         console.log("Pre-signed URL:", url);
         return url;
     }
-    catch(err)
-    {
+    catch (err) {
         console.error("Error generating pre-signed URL:", err);
-        console.log(err.message);
-        throw err;
-    } 
+
+        // If the image doesn't exist, return a random fallback URL
+        const randomIndex = Math.floor(Math.random() * fallbackImages.length);
+        const fallbackUrl = fallbackImages[randomIndex];
+        console.log("Fallback URL:", fallbackUrl);
+        return fallbackUrl;
+    }
 }
 
 

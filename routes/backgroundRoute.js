@@ -53,4 +53,18 @@ BackgroundRouter.get('/:projectId', async (req, res) => {
     }
 })
 
+
+BackgroundRouter.get('/cover/:projectId',async (req,res) => {
+    const projectId = req.params.projectId;
+    try{
+
+        const url = await getImageUrl(projectId, 0);
+        res.send(url);
+    }
+    catch(err)
+    {
+        res.send("error");
+    } 
+})
+
 export default BackgroundRouter;
