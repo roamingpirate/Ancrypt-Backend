@@ -2,6 +2,7 @@ import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } fro
 import dotenv from 'dotenv';
 import { getScriptChanges } from "./ddb.js";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import fs from 'fs';
 //import { projects } from "elevenlabs/api";
 
 dotenv.config();
@@ -190,6 +191,30 @@ export const uploadAudioFile = async (projectId,audioData) => {
     }   
 }
 
+export const uploadAudioFileWav = async (audioName, audioFilePath) => {
+    const audioDataKey = `${audioName}.wav`;
+
+    try {
+        const audioFileBuffer = await fs.promises.readFile(audioFilePath);
+
+        const params = {
+            Bucket: 'ancript-audios',
+            Key: audioDataKey,
+            Body: audioFileBuffer,
+            ContentType: 'audio/wav',
+        };
+
+        const data = await s3.send(new PutObjectCommand(params));
+        console.log("Audio Uploaded Successfully");
+
+        const audioUrl = `https://${params.Bucket}.s3.amazonaws.com/${audioDataKey}`;
+        return audioUrl;
+    } catch (err) {
+        console.log("Error in uploading Audio");
+        console.log(err.message);
+        throw err;
+    }
+};
 
 export const retriveAudioFile = async (projectId) => {
     const audioDataKey = `${projectId}/audio.json`;

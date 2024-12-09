@@ -15,7 +15,6 @@ AnimationScriptRouter.post('/update/:projectId', async (req,res) => {
     try{
     const animationScriptData = req.body;
     const projectId = req.params.projectId;
-    //console.log(animationScriptData);
     await uploadAnimationScriptData(projectId, animationScriptData);
     res.send("success");
     }

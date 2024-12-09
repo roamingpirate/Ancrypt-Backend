@@ -1,45 +1,38 @@
 import express from 'express';
 import { getBackgroundImageStatus, updateBackgroundImageStatus } from '../database/ddb.js';
-import { createBackgroundImage } from '../bo/createBackgroundImage.js';
+import createBackgroundImage  from '../bo/createBackgroundImage.js';
 import { getBackgroundImagePrompt, getImageUrl } from '../database/s3.js';
+import { FixedThreadPool, PoolEvents, availableParallelism } from 'poolifier'
 
 const BackgroundRouter = express.Router();
 BackgroundRouter.use(express.json());
 
-
-BackgroundRouter.post('/:projectId', async (req,res) => {
-    const projectId = req.params.projectId;
-    const backgroundStatus = await getBackgroundImageStatus(projectId);
-    console.log(backgroundStatus);
-    try{
-    if(backgroundStatus == 0)
-    {
-        updateBackgroundImageStatus(projectId,2);
-        createBackgroundImage(projectId);
-        res.send({message:"creation started",status: 0});
-    }
-    else if(backgroundStatus == 2)
-    {
-        res.send({message:"processing",status: 0});
-    }
-    else {
-        res.send({message:"success",status: 1});
-    }
-    }
-    catch(error){
-        await updateBackgroundImageStatus(projectId,0);
-        res.send({message:"error",});
-    }
+const BackgroundCreatorWorkerPool = new FixedThreadPool(1, './bo/createBackgroundImage.js', {
+  onlineHandler: () => console.info('worker is online'),
+  errorHandler: e => console.error(e),
 })
 
+BackgroundCreatorWorkerPool.emitter?.on(PoolEvents.ready, () => console.info('BGPool is ready'))
+BackgroundCreatorWorkerPool.emitter?.on(PoolEvents.busy, () => console.info('BGPool is busy'))
+BackgroundCreatorWorkerPool.emitter?.on(PoolEvents.full, () => console.info('BGPool is full'))
 
 BackgroundRouter.get('/:projectId', async (req, res) => {
     const projectId = req.params.projectId;
-    const response = await getBackgroundImagePrompt(projectId);
-    const len = response.bp.length;
-    const urls = [];
 
-    try{
+    try{     
+        const promptData = await getBackgroundImagePrompt(projectId);
+        const len = promptData.bp.length;
+        const urls = [];
+        const backgroundStatus = await getBackgroundImageStatus(projectId);
+
+        if(backgroundStatus == 0)
+        {
+            console.log("Background Image not available ... Creating background image");
+            //await createBackgroundImage(projectId,promptData);
+            await BackgroundCreatorWorkerPool.execute({projectId,promptData});
+            await updateBackgroundImageStatus(projectId,1);
+        }
+
         for(let i = 0; i < len; i++)
         {
             const url = await getImageUrl(projectId, i);
@@ -51,20 +44,7 @@ BackgroundRouter.get('/:projectId', async (req, res) => {
     {
         res.send("error");
     }
-})
 
-
-BackgroundRouter.get('/cover/:projectId',async (req,res) => {
-    const projectId = req.params.projectId;
-    try{
-
-        const url = await getImageUrl(projectId, 0);
-        res.send(url);
-    }
-    catch(err)
-    {
-        res.send("error");
-    } 
 })
 
 export default BackgroundRouter;

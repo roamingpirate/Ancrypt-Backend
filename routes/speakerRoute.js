@@ -3,7 +3,6 @@ import { retriveSpeakerData, uploadSpeakerData } from '../database/s3.js';
 const SpeakerRouter = express.Router();
 SpeakerRouter.use(express.json());
 
-
 SpeakerRouter.get('/:projectId', async (req,res) => {
     const projectId = req.params.projectId;
     let speakerData = await retriveSpeakerData(projectId);
@@ -18,7 +17,6 @@ SpeakerRouter.get('/:projectId', async (req,res) => {
 SpeakerRouter.post('/update/:projectId', async(req,res) => {
     const updatedSpeaker = req.body;
     const projectId = req.params.projectId;
-    console.log("telloer");
     try{
         uploadSpeakerData(projectId,updatedSpeaker);
         res.send("success"); 

@@ -5,7 +5,7 @@ import ffmpegPath from 'ffmpeg-static';
 import { promises as fs , createWriteStream} from "fs";
 import path from 'path'; 
 import { parentPort, workerData } from "worker_threads";
-import { retriveScriptData, retriveSpeakerData, uploadAudioFile } from '../database/s3.js';
+import { retriveScriptData, retriveSpeakerData, uploadAudioFile, uploadAudioFileWav, uploadAudioPart } from '../database/s3.js';
 import dotenv from 'dotenv';
 import { TextToSpeechClient } from '@google-cloud/text-to-speech';
 import util from 'util';
@@ -144,13 +144,15 @@ const lipSyncMessage = async (pid,i, j,k) => {
         };
 
         const [response] = await textToSpeechClient.synthesizeSpeech(request);
+        console.log("popo")
         await fs.writeFile(fileName, response.audioContent); // Save the audio file
+        console.log("tapu")
         console.log('File written successfully!');
 
         await lipSyncMessage(projectId, i, j, k);
-
+        const audioFileUrl = await uploadAudioFileWav(`${projectId}_${i}_${j}_${k}`,fileName)
         const currentAudioData = {
-            audio: await audioFileToBase64(fileName),
+            audio: audioFileUrl,
             lipsync: await readJsonTranscript(jsonFileName), // Read lipsync JSON
         };
 
@@ -168,9 +170,15 @@ const lipSyncMessage = async (pid,i, j,k) => {
         SpeechAudioData.push(currentAudioData); // Add data to array for further processing
     }
 
-    await fs.rmdir(`./public/audios/${projectId}`);
+    //await fs.rmdir(`./public/audios/${projectId}`);
 
-    return SpeechAudioData;
+     const timestamp = Date.now();
+     const audioPartName = `${projectId}_audio_${timestamp}_${Math.random().toString(36).substring(2, 7)}`;
+     console.log(`${audioPartName}`);
+     await uploadAudioPart(projectId,audioPartName, SpeechAudioData);
+     console.log("audio part " + k + i +"uploaded");
+     return audioPartName;
+    //return SpeechAudioData;
 };
 
   //createAudio(workerData.projectId, workerData.as);

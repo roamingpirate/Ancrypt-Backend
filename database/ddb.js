@@ -437,3 +437,76 @@ export const fetchProjectDetails = async (userId, projectNo) => {
         throw err;
     }
 };
+
+export const checkIsVideoRecorded = async (projectId) => {
+  const params = {
+    TableName: 'ankryptProjects',
+    Key: {
+      'projectId': { S: projectId }
+    },
+    ProjectionExpression: 'isVideoRecorded'
+  };
+
+  try {
+    const command = new GetItemCommand(params);
+    const data = await ddb.send(command);
+
+    if (!data.Item || !data.Item.isVideoRecorded) {
+      return false; 
+    }
+
+    return data.Item.isVideoRecorded.S === 'true';
+  } catch (err) {
+    console.error('Error fetching isVideoRecorded:', err);
+    throw new Error('Could not fetch isVideoRecorded');
+  }
+};
+
+export const updateIsVideoRecorded = async (projectId, isRecorded) => {
+  const params = {
+    TableName: 'ankryptProjects',
+    Key: {
+      'projectId': { S: projectId },
+    },
+    UpdateExpression: 'SET isVideoRecorded = :isRecorded',
+    ExpressionAttributeValues: {
+      ':isRecorded': { S: isRecorded.toString() }
+    },
+    ReturnValues: 'UPDATED_NEW'
+  };
+
+  try {
+    const command = new UpdateItemCommand(params);
+    const data = await ddb.send(command);
+    console.log('Update succeeded:', data);
+    return { status: true, data };
+  } catch (err) {
+    console.error('Update failed:', err);
+    return { status: false, error: err.message };
+  }
+};
+
+  
+export const updateVideoJobId = async (projectId, jobId) => {
+  const params = {
+    TableName: 'ankryptProjects',
+    Key: {
+      'projectId': { S: projectId },
+    },
+    UpdateExpression: 'SET videoJobId = :jobId',
+    ExpressionAttributeValues: {
+      ':jobId': { S: jobId }
+    },
+    ReturnValues: 'UPDATED_NEW'
+  };
+
+  try {
+    const command = new UpdateItemCommand(params);
+    const data = await ddb.send(command);
+    console.log('Update succeeded:', data);
+    return { status: true, data };
+  } catch (err) {
+    console.error('Update failed:', err);
+    return { status: false, error: err.message };
+  }
+};

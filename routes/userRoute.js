@@ -1,5 +1,5 @@
 import express from 'express';
-import { addNewProject, addNewUser, addProjectToUser, addUserRequest, fetchIsNewStatus, getOrCreateAvatarToken, getProjectList, isBetaApproved, setIsNewToFalse } from '../database/ddb.js';
+import { addNewUser, addProjectToUser, addUserRequest, fetchIsNewStatus, getOrCreateAvatarToken, getProjectList, isBetaApproved, setIsNewToFalse } from '../database/ddb.js';
 
 const UserRouter = express.Router();
 UserRouter.use(express.json());
@@ -94,9 +94,5 @@ UserRouter.post('/setIsNewFalse/:userId', async (req, res) => {
         res.status(500).send({ message: "Error setting isNew to false" });
     }
 });
-
-
-
-
 
 export default UserRouter;
