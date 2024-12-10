@@ -21,14 +21,12 @@ const createBackgroundImage = async (task) => {
                 await uploadImageFile(projectId, base64Image, i);
             } catch (err) {
                 console.error(`Error processing prompt "${prompt}":`, err);
-                throw err;
             }
         });
 
         await Promise.all(backgroundImagePromises);
     } catch (err) {
         console.error("Error in createBackgroundImage:", err);
-        throw err;
     }
 };
 
